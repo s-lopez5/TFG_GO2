@@ -1,17 +1,27 @@
-import gymnasium
+import gymnasium as gym
 import numpy as np
-env = gymnasium.make(
-    'Ant-v5',
-    xml='~/Documentos/AR-GO2/model_unitree_go2/scene.xml',
-    forward_reward_weight=1,    #kept the same as the 'Ant' environment
-    ctrl_cost_weight=0.05,     #change because of the stronger motors of 'Go2' robot
-    contact_cost_weight=5e-4,  #kept the same as the 'Ant' environment
-    healthy_reward=1,   #kept the same as the 'Ant' environment
-    main_body=1,    #represent the 'Trunk' of he 'Go2' robot
-    healthy_z_range=(0.195, 0.75),  #set to avoid sampling steps where the robot has fallen or jumped too high
-    include_cfrc_ext_in_observation=True,   #kept the same as the 'Ant' environment
-    exclude_current_positions_from_observation=False,   #kept the same as the 'Ant' environment
-    reset_noise_scale=0.1,  #set to avoid policy overfitting 
-    frame_skip=25,  #set dt=0.05 ---> dt=frame_skip*model.opt.timestep
-    max_episode_steps=1000,  
-)
+
+env = gym.make('Ant-v5', xml_file='/home/santilopez/Documentos/TFG_GO2/model_unitree_go2/scene.xml')
+
+data = []           #Lista para almacenar las tuplas
+num_episodes = 10   # Numero de episodios para recolectar datos
+
+for episode in range(num_episodes):
+    observation, info = env.reset()
+    done = False
+
+    while not done:
+        action = env.action_space.sample()  # Selecciona una acción aleatoria
+        print(len(action))
+        print(action)
+        next_observation, reward, terminated, truncated, info = env.step(action)
+        
+        data.append((observation, action, next_observation))
+        
+        # Actualizamos la observacion (Pt a Pt+1)
+        observation = next_observation
+
+        done = terminated or truncated
+
+print(f"Total de transiciones recolectadas: {len(data)}")
+
