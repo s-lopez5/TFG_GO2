@@ -1,44 +1,41 @@
 import os
-import gymnasium as gym
+import time
 import numpy as np
+
+import gymnasium as gym
+
 import mujoco
 import mujoco.viewer
 
-"""
-env = gym.make('Ant-v5')
-#env = gym.make('Ant-v5', xml_file='/home/santilopez/Documentos/TFG_GO2/model_unitree_go2/scene.xml')
+m = mujoco.MjModel.from_xml_path('/path/to/mjcf.xml')
+d = mujoco.MjData(m)
+
+with mujoco.viewer.launch_passive(m, d) as viewer:
+  # Close the viewer automatically after 30 wall-seconds.
+  start = time.time()
+  
+  while viewer.is_running() and time.time() - start < 30:
+    step_start = time.time()
+
+    # mj_step can be replaced with code that also evaluates
+    # a policy and applies a control signal before stepping the physics.
+    mujoco.mj_step(m, d)
+
+    # Example modification of a viewer option: toggle contact points every two seconds.
+    with viewer.lock():
+      viewer.opt.flags[mujoco.mjtVisFlag.mjVIS_CONTACTPOINT] = int(d.time % 2)
+
+    # Pick up changes to the physics state, apply perturbations, update options from GUI.
+    viewer.sync()
+
+    # Rudimentary time keeping, will drift relative to wall clock.
+    time_until_next_step = m.opt.timestep - (time.time() - step_start)
+    if time_until_next_step > 0:
+      time.sleep(time_until_next_step)
 
 
-data = []           #Lista para almacenar las tuplas
-num_episodes = 10   # Numero de episodios para recolectar datos
 
-for episode in range(num_episodes):
-    observation, info = env.reset()
-    done = False
-    #i = 0
-    #while i < 10:
-    while not done:
-        action = env.action_space.sample()  # Selecciona una acción aleatoria
-        print("Acción muestreada:", action)
-        next_observation, reward, terminated, truncated, info = env.step(action)
-        print("obs muestreada:", next_observation)
-        print(len(next_observation))
-        
-        data.append((observation, action, next_observation))
-        
-        # Actualizamos la observacion (Pt a Pt+1)
-        observation = next_observation
 
-        done = terminated or truncated
-        #i += 1
-
-print(f"Total de transiciones recolectadas: {len(data)}")
-"""
-
-#m = mujoco.MjModel.from_xml_path('/home/santilopez/Documentos/TFG_GO2/model_unitree_go2/scene.xml')
-#d = mujoco.MjData(m)
-
-#mujoco.viewer.launch(m, d)
 
 
 
