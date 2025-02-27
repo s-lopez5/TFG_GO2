@@ -1,5 +1,4 @@
 import gymnasium as gym
-import mujoco as mj
 import numpy as np
 import pickle
 import xml.etree.ElementTree as ET
@@ -13,9 +12,6 @@ def modify_box_position(box_path, new_position):
 
     tree.write(box_path)
 
-def get_box_pos(data, box_id):
-    return data.xpos[box_id]
-
 
 #Modificar la posicion de la caja Objetivo
 """
@@ -26,20 +22,14 @@ modify_box_position(box_path, new_position)
 # Cargamos el enviroment de gym
 env = gym.make('Ant-v5', xml_file='/home/santilopez/Documentos/TFG_GO2/model_unitree_go2/scene.xml', render_mode = "human")
 
-# Cargamos el xml con mujoco
-model = mj.MjModel.from_xml_path('/home/santilopez/Documentos/TFG_GO2/model_unitree_go2/scene.xml')
-data = mj.MjData(model)
-
 trainnig_data = []  #Lista de datos de entrenamiento
 num_episodes = 10  # Numero de episodios para recolectar datos
 
-box_id = model.body("box").id   # Cogemos el id correspondiente a la caja objetivo
-print(get_box_pos(data, box_id))
+
 
 for episode in range(num_episodes):
     observation, info = env.reset()
     done = False
-    print(get_box_pos(data, box_id))
     #print(len(observation))
 
     while not done:
