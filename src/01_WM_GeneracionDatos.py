@@ -1,5 +1,4 @@
 import mujoco as mj
-import mujoco.viewer
 import time
 import numpy as np
 import pickle
@@ -30,7 +29,7 @@ def get_obs(data):
     qpos = np.copy(data.qpos)    # Posiciones de las articulaciones
     qvel = np.copy(data.qvel)    # Velocidades de las articulaciones
     
-    return np.concatenate([qpos, qvel]) # Observación completa
+    return np.concat([qpos, qvel]) # Observación completa
 
 #Modificar la posicion de la caja Objetivo
 """
@@ -44,57 +43,45 @@ model = mj.MjModel.from_xml_path('/home/santilopez/Documentos/TFG_GO2/model_unit
 data = mj.MjData(model)
 
 trainnig_data = []  #Lista de datos de entrenamiento
-num_episodes = 10  # Numero de episodios para recolectar datos
+num_episodes = 5  # Numero de episodios para recolectar datos
 
 box_id = model.body("box").id   # Cogemos el id correspondiente a la caja objetivo
 
 # Creamos la ventana de visualizacion
-with mujoco.viewer.launch_passive(model, data) as viewer:
 
-    # Colocar el robot en la posicion por defect
-    data.qpos[:] = model.key_qpos
-    mj.mj_step(model, data)
-    viewer.sync()   
+# Colocar el robot en la posicion por defect
+data.qpos[:] = model.key_qpos
+mj.mj_step(model, data)  
 
-    for episode in range(num_episodes):
+for episode in range(num_episodes):
+    n_iteration = 2 #10000 # Numero maximo de iteraciones realizadas en cada episodio
+    
+    for iteration in range(n_iteration):
+        obs_t = get_obs(data)  # Obtenemos las observaciones en T
+        action = get_random_action(model)   #Obtenemos la accion aleatoria   
+        data.ctrl[:] = action   # Aplica la accion
+        mj.mj_step(model, data) # Avanza la simulacion
+        obs_t1 = get_obs(data) # Obtenemos las observaciones en T+1 
+
+        # Guardar datos
+        boxPos = np.copy(get_box_pos(data, box_id))
+        datos_entrada = np.concat([np.concat([obs_t, boxPos]), action])
+        trainnig_data.append((datos_entrada, np.concat([obs_t1, boxPos]))) 
         
-        n_iteration = 10000 # Numero maximo de iteraciones realizadas en cada episodio
-        for iteration in range(n_iteration):
-            obs_t = get_obs(data)  # Obtenemos las observaciones en T
-            action = get_random_action(model)   #Obtenemos la accion aleatoria   
-            data.ctrl[:] = action   # Aplica la accion
-            mj.mj_step(model, data) # Avanza la simulacion
-            obs_t1 = get_obs(data) # Obtenemos las observaciones en T+1 
+        # Condicion de parada: si el robot se cae
+        robot_height = data.qpos[2]  # Coordenada Z del cuerpo del robot
+        if robot_height < 0.1:  # Si la altura es menor a un umbral, el robot esta caido
+            print("Simulacion detenida por caida de robot en iteracion", iteration)
+            break
 
-            trainnig_data.append((obs_t, action, obs_t1))   # Guardar datos
-
-            viewer.sync()   # Actualiza la visualizacion
-            
-            # Condicion de parada: si el robot se cae
-            robot_height = data.qpos[2]  # Coordenada Z del cuerpo del robot
-            if robot_height < 0.1:  # Si la altura es menor a un umbral, el robot esta caido
-                print("Simulacion detenida por caida de robot en iteracion", iteration)
-                break
-
-        # Reiniciar la simulación al final de cada iteración
-        data.qpos[:] = model.key_qpos
+    # Reiniciar la simulación al final de cada iteración
+    data.qpos[:] = model.key_qpos
 
 
 print(f"Numero de iteraciones realizadas: {num_episodes}")
 print(f"Total de transiciones recolectadas: {len(trainnig_data)}")
-print(f" Tamaño Pt: {len(trainnig_data[0][0])} \n Tamaño Accion: {len(trainnig_data[0][1])} \n Tamaño Pt+1: {len(trainnig_data[0][2])}")
-
+print(f" Tamaño Pt+Accion: {len(trainnig_data[0][0])} \n Tamaño Pt+1: {len(trainnig_data[0][1])}")
 
 with open("lista_obs.pkl", "wb") as f:
     pickle.dump(trainnig_data, f)
     
-
-
-#Preguntar como guardar la lista
-"""
-# Guardar datos
-datos_entrada = obs_t
-datos_entrada.append(action)
-
-trainnig_data.append((datos_entrada, obs_t1))  
-"""

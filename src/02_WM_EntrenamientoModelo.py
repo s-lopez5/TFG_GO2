@@ -1,27 +1,68 @@
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow import keras
+from tensorflow.keras import layers
 import numpy as np
+import matplotlib.pyplot as plt
+import pickle
 
-# Datos de ejemplo
-percepciones_T = np.array([[0.1, 0.2], [0.2, 0.3], [0.3, 0.4]])
-acciones_T = np.array([[0.5], [0.6], [0.7]])
-percepciones_T1 = np.array([[0.4, 0.5], [0.5, 0.6], [0.6, 0.7]])
+def load_data():
+    with open("lista_obs.pkl", "rb") as f:
+        train_data = pickle.load(f)
+    return train_data
 
-# Concatenar percepciones_T y acciones_T para formar las entradas
-entradas = np.concatenate((percepciones_T, acciones_T), axis=1)
+#Cargar los datos de entrenamiento
+training_data = load_data()
+
+# Separar en listas por columna(separamos datos de entrada y datos de salida)
+input_data, output_data = map(list, zip(*training_data))
+
+# Definir dimensiones de entrada y salida
+dim_entrada = len(input_data[0])  
+dim_salida = len(output_data[0])
+
+X_train = np.copy(input_data)
+Y_train = np.copy(output_data)
 
 # Crear el modelo
-model = Sequential()
-model.add(Dense(10, input_dim=entradas.shape[1], activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(percepciones_T1.shape[1], activation='linear'))
+modelo = keras.Sequential([
+    layers.Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(Y_train.shape[1])  # Sin activación porque es regresión
+])
 
 # Compilar el modelo
-model.compile(optimizer='adam', loss='mse')
+modelo.compile(optimizer="adam",
+               loss='mse',  # Minimizar error cuadrático medio
+               metrics=['mae']) #Mean Absolute Error
 
-# Entrenar el modelo
-model.fit(entradas, percepciones_T1, epochs=100, batch_size=1)
+
+
+# Entrenar la red
+hist = modelo.fit(X_train, Y_train, epochs=100, batch_size=32, verbose=1)
+
+#Graficar la evolución de la pérdida y RMSE
+plt.figure(figsize=(12, 5))
+
+# Gráfico de la pérdida (MSE)
+plt.subplot(1, 2, 1)
+plt.plot(hist.history['loss'], label='Pérdida (MSE)')
+plt.xlabel('Épocas')
+plt.ylabel('MSE')
+plt.title('Evolución de la Pérdida')
+plt.legend()
+plt.grid()
+
+# Gráfico de MAE
+plt.subplot(1, 2, 2)
+plt.plot(hist.history['mae'], label='MAE', color='orange')
+plt.xlabel('Épocas')
+plt.ylabel('MAE')
+plt.title('Evolución de MAE')
+plt.legend()
+plt.grid()
+
+plt.show()
 
 # Guardar el modelo entrenado
-model.save('modelo_entrenado.h5')
+modelo.save("WM_go2.keras")
