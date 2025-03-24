@@ -1,14 +1,21 @@
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
-import numpy as np
+import numpy as np 
+
 import matplotlib.pyplot as plt
 import pickle
+
 
 def load_data():
     with open("lista_obs.pkl", "rb") as f:
         train_data = pickle.load(f)
     return train_data
+
+# Definir RMSE como métrica personalizada
+def rmse(y_true, y_pred):
+    return tf.sqrt(tf.reduce_mean(tf.square(y_true - y_pred)))
+
 
 #Cargar los datos de entrenamiento
 training_data = load_data()
@@ -16,10 +23,7 @@ training_data = load_data()
 # Separar en listas por columna(separamos datos de entrada y datos de salida)
 input_data, output_data = map(list, zip(*training_data))
 
-# Definir dimensiones de entrada y salida
-dim_entrada = len(input_data[0])  
-dim_salida = len(output_data[0])
-
+# Convertir a numpy arrays
 X_train = np.copy(input_data)
 Y_train = np.copy(output_data)
 
@@ -34,7 +38,7 @@ modelo = keras.Sequential([
 # Compilar el modelo
 modelo.compile(optimizer="adam",
                loss='mse',  # Minimizar error cuadrático medio
-               metrics=['mae']) #Mean Absolute Error
+               metrics=[rmse]) #Root mean square error
 
 
 
@@ -53,12 +57,12 @@ plt.title('Evolución de la Pérdida')
 plt.legend()
 plt.grid()
 
-# Gráfico de MAE
+# Gráfico de RMSE
 plt.subplot(1, 2, 2)
-plt.plot(hist.history['mae'], label='MAE', color='orange')
+plt.plot(hist.history['rmse'], label='RMSE', color='orange')
 plt.xlabel('Épocas')
-plt.ylabel('MAE')
-plt.title('Evolución de MAE')
+plt.ylabel('RMSE')
+plt.title('Evolución de RMSE')
 plt.legend()
 plt.grid()
 

@@ -43,7 +43,7 @@ model = mj.MjModel.from_xml_path('/home/santilopez/Documentos/TFG_GO2/model_unit
 data = mj.MjData(model)
 
 trainnig_data = []  #Lista de datos de entrenamiento
-num_episodes = 5  # Numero de episodios para recolectar datos
+num_episodes = 10  # Numero de episodios para recolectar datos
 
 box_id = model.body("box").id   # Cogemos el id correspondiente a la caja objetivo
 
@@ -54,7 +54,7 @@ data.qpos[:] = model.key_qpos
 mj.mj_step(model, data)  
 
 for episode in range(num_episodes):
-    n_iteration = 2 #10000 # Numero maximo de iteraciones realizadas en cada episodio
+    n_iteration = 10000 # Numero maximo de iteraciones realizadas en cada episodio
     
     for iteration in range(n_iteration):
         obs_t = get_obs(data)  # Obtenemos las observaciones en T
