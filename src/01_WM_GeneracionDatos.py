@@ -43,7 +43,7 @@ model = mj.MjModel.from_xml_path('/home/santilopez/Documentos/TFG_GO2/model_unit
 data = mj.MjData(model)
 
 trainnig_data = []  #Lista de datos de entrenamiento
-num_episodes = 10  # Numero de episodios para recolectar datos
+num_episodes = 100  # Numero de episodios para recolectar datos
 
 box_id = model.body("box").id   # Cogemos el id correspondiente a la caja objetivo
 
