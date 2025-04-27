@@ -40,7 +40,7 @@ modify_box_position(box_path, new_position)
 """
 
 # Cargamos el xml con mujoco
-model = mj.MjModel.from_xml_path('/home/santilopez/Documentos/TFG_GO2/model_unitree_go2/scene.xml')
+model = mj.MjModel.from_xml_path("/home/santilopez/Documentos/TFG_GO2/model_unitree_go2/scene.xml")
 data = mj.MjData(model)
 
 trainnig_data = []  #Lista de datos de entrenamiento
