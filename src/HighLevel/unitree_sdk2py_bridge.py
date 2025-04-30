@@ -4,23 +4,19 @@ import pygame
 import sys
 import struct
 
-from unitree_sdk2py.core.channel import ChannelSubscriber, ChannelPublisher
+from sdkpy.core.channel import ChannelSubscriber, ChannelPublisher
 
-from unitree_sdk2py.idl.unitree_go.msg.dds_ import SportModeState_
-from unitree_sdk2py.idl.unitree_go.msg.dds_ import WirelessController_
-from unitree_sdk2py.idl.default import unitree_go_msg_dds__SportModeState_
-from unitree_sdk2py.idl.default import unitree_go_msg_dds__WirelessController_
-from unitree_sdk2py.utils.thread import RecurrentThread
+from sdkpy.idl.unitree_go.msg.dds_ import SportModeState_
+from sdkpy.idl.unitree_go.msg.dds_ import WirelessController_
+from sdkpy.idl.default import unitree_go_msg_dds__SportModeState_
+from sdkpy.idl.default import unitree_go_msg_dds__WirelessController_
+from sdkpy.utils.thread import RecurrentThread
 
 import config
-if config.ROBOT=="g1":
-    from unitree_sdk2py.idl.unitree_hg.msg.dds_ import LowCmd_
-    from unitree_sdk2py.idl.unitree_hg.msg.dds_ import LowState_
-    from unitree_sdk2py.idl.default import unitree_hg_msg_dds__LowState_ as LowState_default
-else:
-    from unitree_sdk2py.idl.unitree_go.msg.dds_ import LowCmd_
-    from unitree_sdk2py.idl.unitree_go.msg.dds_ import LowState_
-    from unitree_sdk2py.idl.default import unitree_go_msg_dds__LowState_ as LowState_default
+
+from sdkpy.idl.unitree_go.msg.dds_ import LowCmd_
+from sdkpy.idl.unitree_go.msg.dds_ import LowState_
+from sdkpy.idl.default import unitree_go_msg_dds__LowState_ as LowState_default
 
 TOPIC_LOWCMD = "rt/lowcmd"
 TOPIC_LOWSTATE = "rt/lowstate"
@@ -45,9 +41,9 @@ class UnitreeSdk2Bridge:
         self.idl_type = (self.num_motor > NUM_MOTOR_IDL_GO) # 0: unitree_go, 1: unitree_hg
 
         self.joystick = None
-
-        # Check sensor
+        
         for i in range(self.dim_motor_sensor, self.mj_model.nsensor):
+            
             name = mujoco.mj_id2name(
                 self.mj_model, mujoco._enums.mjtObj.mjOBJ_SENSOR, i
             )
@@ -55,7 +51,7 @@ class UnitreeSdk2Bridge:
                 self.have_imu_ = True
             if name == "frame_pos":
                 self.have_frame_sensor_ = True
-
+        
         # Unitree sdk2 message
         self.low_state = LowState_default()
         self.low_state_puber = ChannelPublisher(TOPIC_LOWSTATE, LowState_)
@@ -64,6 +60,7 @@ class UnitreeSdk2Bridge:
             interval=self.dt, target=self.PublishLowState, name="sim_lowstate"
         )
         self.lowStateThread.Start()
+        
 
         self.high_state = unitree_go_msg_dds__SportModeState_()
         self.high_state_puber = ChannelPublisher(TOPIC_HIGHSTATE, SportModeState_)
@@ -107,6 +104,7 @@ class UnitreeSdk2Bridge:
             "down": 14,
             "left": 15,
         }
+        
 
     def LowCmdHandler(self, msg: LowCmd_):
         if self.mj_data != None:
@@ -394,35 +392,3 @@ class UnitreeSdk2Bridge:
                 )
             index = index + self.mj_model.sensor_dim[i]
         print(" ")
-
-
-class ElasticBand:
-
-    def __init__(self):
-        self.stiffness = 200
-        self.damping = 100
-        self.point = np.array([0, 0, 3])
-        self.length = 0
-        self.enable = True
-
-    def Advance(self, x, dx):
-        """
-        Args:
-          δx: desired position - current position
-          dx: current velocity
-        """
-        δx = self.point - x
-        distance = np.linalg.norm(δx)
-        direction = δx / distance
-        v = np.dot(dx, direction)
-        f = (self.stiffness * (distance - self.length) - self.damping * v) * direction
-        return f
-
-    def MujuocoKeyCallback(self, key):
-        glfw = mujoco.glfw.glfw
-        if key == glfw.KEY_7:
-            self.length -= 0.1
-        if key == glfw.KEY_8:
-            self.length += 0.1
-        if key == glfw.KEY_9:
-            self.enable = not self.enable

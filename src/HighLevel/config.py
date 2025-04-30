@@ -1,6 +1,7 @@
 ROBOT = "go2" # Robot name, "go2", "b2", "b2w", "h1", "go2w", "g1" 
 # Robot simulation scene file
-ROBOT_SCENE = "/home/santilopez/Documentos/unitree_mujoco/unitree_robots/go2/scene.xml"#"../unitree_robots/" + ROBOT + "/scene.xml" # Robot scene
+ROBOT_SCENE = "/home/santilopez/Documentos/unitree_mujoco/unitree_robots/go2/scene.xml" # Robot scene
+#ROBOT_SCENE = "/home/santilopez/Documentos/TFG_GO2/model_unitree_go2/scene.xml"
 # DDS domain id, it is recommended to distinguish from the real  (default is 0 on the real robot)
 DOMAIN_ID = 1 # Domain id
 # Network interface name, for simulation, it is recommended to use the local loopback "lo"
