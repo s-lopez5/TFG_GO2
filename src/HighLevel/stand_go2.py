@@ -2,11 +2,11 @@ import time
 import sys
 import numpy as np
 
-from unitree_sdk2py.core.channel import ChannelPublisher, ChannelSubscriber
-from unitree_sdk2py.core.channel import ChannelFactoryInitialize
-from unitree_sdk2py.idl.default import unitree_go_msg_dds__LowCmd_
-from unitree_sdk2py.idl.unitree_go.msg.dds_ import LowCmd_
-from unitree_sdk2py.utils.crc import CRC
+from sdkpy.core.channel import ChannelPublisher, ChannelSubscriber
+from sdkpy.core.channel import ChannelFactoryInitialize
+from sdkpy.idl.default import unitree_go_msg_dds__LowCmd_
+from sdkpy.idl.unitree_go.msg.dds_ import LowCmd_
+from sdkpy.utils.crc import CRC
 
 stand_up_joint_pos = np.array([
     0.00571868, 0.608813, -1.21763, -0.00571868, 0.608813, -1.21763,

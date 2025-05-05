@@ -30,9 +30,6 @@ def SimulationThread():
         global mj_data, mj_model
         
         ChannelFactoryInitialize(config.DOMAIN_ID, config.INTERFACE)
-        #print("Inicializando UnitreeSdk2Bridge con:")
-        #print("  mj_model bodies:", [mj_model.body(i).name for i in range(mj_model.nbody)])
-        #print("  mj_model joints:", [mj_model.joint(i).name for i in range(mj_model.njnt)])
         unitree = UnitreeSdk2Bridge(mj_model, mj_data)
   
         step_counter = 0
@@ -64,13 +61,12 @@ def SimulationThread():
 
 
 def PhysicsViewerThread():
-
     try:
-            while viewer.is_running():
-                locker.acquire()
-                viewer.sync()
-                locker.release()
-                time.sleep(config.VIEWER_DT)
+        while viewer.is_running():
+            locker.acquire()
+            viewer.sync()
+            locker.release()
+            time.sleep(config.VIEWER_DT)
     except Exception as e:
         print("Error en PhysicsViewerThread:", e)
 
