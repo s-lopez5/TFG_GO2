@@ -3,11 +3,11 @@ import time
 from enum import Enum
 from threading import Thread, Condition
 
-from ..idl.unitree_api.msg.dds_ import Request_ as Request
-from ..idl.unitree_api.msg.dds_ import Response_ as Response
+from sdkpy.idl.unitree_api.msg.dds_ import Request_ as Request
+from sdkpy.idl.unitree_api.msg.dds_ import Response_ as Response
 
-from ..core.channel import ChannelFactory
-from ..core.channel_name import ChannelType, GetClientChannelName
+from sdkpy.core.channel import ChannelFactory
+from sdkpy.core.channel_name import ChannelType, GetClientChannelName
 from .request_future import RequestFuture, RequestFutureQueue
 
 

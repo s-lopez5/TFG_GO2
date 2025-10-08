@@ -72,6 +72,9 @@ class NatNetClient:
     # print_level = 1 on
     # print_level = >1 on / print every nth mocap frame
     print_level = 20
+    last_pos = []
+    obj_pos = []
+    obj_localized = False
 
     def __init__(self):
         # Change this value to the IP address of the NatNet server.
@@ -212,6 +215,14 @@ class NatNetClient:
 
     def get_print_level(self):
         return self.print_level
+    
+    #Getter para obtener la ultima posicion recibida
+    def get_last_pos(self):
+        return self.last_pos
+
+    #Getter para obtener la posicion objetivo
+    def get_objetive_pos(self):
+        return self.objetive_pos
 
     def connected(self):
         ret_value = True
@@ -932,6 +943,7 @@ class NatNetClient:
         param, = struct.unpack('h', data[offset:offset+2])
         offset += 2
         return data, offset, frame_suffix_data, param
+    
     def __unpack_frame_suffix_data_2_7_to_3(self, data, offset, frame_suffix_data, param): #type: ignore  # noqa E501
         """Unpacks frame suffix data from inclusive of NatNet 2.7 to but not
         including NatNet 3"""
@@ -2054,11 +2066,11 @@ class NatNetClient:
 
         return 0
 
-    def __process_message(self, data: bytes, print_level=0):
+    def __process_message(self, data: bytes, print_level=0): #type: ignore  # noqa E501
         # return message ID
         major = self.get_major()
         minor = self.get_minor()
-
+        
         trace("Begin Packet\n-----------------")
         show_nat_net_version = False
         if show_nat_net_version:
@@ -2071,6 +2083,8 @@ class NatNetClient:
 
         packet_size = int.from_bytes(data[2:4], byteorder='little', signed=True) #type: ignore  # noqa E501
 
+        self.last_pos = []
+
         # skip the 4 bytes for message ID and packet_size
         offset = 4
         if message_id == self.NAT_FRAMEOFDATA:
@@ -2079,12 +2093,80 @@ class NatNetClient:
 
             offset_tmp, mocap_data = self.__unpack_mocap_data(data[offset:], packet_size, major, minor) #type: ignore  # noqa E501
             offset += offset_tmp
-            print("MoCap Frame: %d\n" % (mocap_data.prefix_data.frame_number))
+
+            # Print MarkerSet Data
+            if mocap_data.marker_set_data:
+                print(f"\n--- MARKER SET DATA ---")
+                print(f"Marker Set Count: {mocap_data.marker_set_data.get_marker_set_count()}")
+                for i, marker_data in enumerate(mocap_data.marker_set_data.marker_data_list):
+                    print(f"  MarkerSet {i}: {marker_data.model_name.decode('utf-8') if marker_data.model_name else 'Unknown'}")
+                    print(f"    Markers: {len(marker_data.marker_pos_list)}")
+                    for j, pos in enumerate(marker_data.marker_pos_list):
+                        print(f"      Marker {j}: X={pos[0]:.4f}, Y={pos[1]:.4f}, Z={pos[2]:.4f}")
+
+            #Obtener datos de los markers
+            if mocap_data.marker_set_data:
+                for i, marker_data in enumerate(mocap_data.marker_set_data.marker_data_list):
+                    if marker_data.model_name.decode('utf-8') == "objetivo":
+                        if self.obj_localized != True:
+                            self.obj_localized = True
+                            self.obj_pos = marker_data.marker_pos_list[0]
+                    elif marker_data.model_name.decode('utf-8') == "Go2":
+                        self.last_pos = marker_data.marker_pos_list[0]
+            
+            print("\nLast Position: ", self.last_pos)
+            
             # get a string version of the data for output
+            """
             if print_level >= 1:
                 mocap_data_str = mocap_data.get_as_string()
-                print(" %s\n" % mocap_data_str)
-
+                #print(" %s\n" % mocap_data_str)
+                # Parse the string to extract labeled marker positions
+                print("========================")
+                print("=== MARKER POSITIONS ===")
+                lines = mocap_data_str.split('\n')
+                
+                i = 0
+                while i < len(lines):
+                    line = lines[i].strip()
+                    
+                    # Busca las lineas que contienen "Labeled Marker"
+                    if line.startswith("Labeled Marker"):
+                        marker_info = line
+                        i += 1
+                        
+                        # Extraer marker ID
+                        marker_id = "1"
+                        if i < len(lines) and "MarkerID:" in lines[i]:
+                            id_line = lines[i]
+                            # Extrae el numero del marker id con la expresion regular "\s*(\d+)"
+                            import re
+                            match = re.search(r'MarkerID:\s*(\d+)', id_line)
+                            if match:
+                                marker_id = match.group(1)
+                        
+                        # Busca la linea de "pos"
+                        while i < len(lines):
+                            pos_line = lines[i].strip()
+                            if pos_line.startswith("pos"):
+                                # Extrae la posicion: pos : [0.97, 0.73, 0.95]
+                                import re
+                                pos_match = re.search(r'pos\s*:\s*\[([^\]]+)\]', pos_line)
+                                if pos_match:
+                                    coords = pos_match.group(1).split(',')
+                                    if len(coords) >= 3:
+                                        #Crea un array con las posiciones x,y,z
+                                        position = [float(coord.strip()) for coord in coords[:3]]
+                                        x, y, z = position
+                                        self.last_pos.append([x, y, z])
+                                        print("Marker ID %s: X=%.3f, Y=%.3f, Z=%.3f" % (marker_id, x, y, z))
+                                break
+                            i += 1
+                    i += 1
+                
+                print("========================\n")
+            """    
+            
         elif message_id == self.NAT_MODELDEF:
             trace("Message ID : %3.1d NAT_MODELDEF" % message_id)
             trace("Packet Size: %d" % packet_size)
@@ -2094,8 +2176,8 @@ class NatNetClient:
             # get a string version of the data for output
             data_descs_str = data_descs.get_as_string()
             if print_level > 0:
-                print(" %s\n" % (data_descs_str))
-
+                print(" %s\n" % (data_descs_str))        
+        
         elif message_id == self.NAT_SERVERINFO:
             trace("Message ID : %3.1d NAT_SERVERINFO" % message_id)
             trace("Packet Size: ", packet_size)
@@ -2144,12 +2226,14 @@ class NatNetClient:
             message, separator, remainder = bytes(data[offset:]).partition(b'\0') #type: ignore  # noqa E501
             offset += len(message) + 1
             trace("Received message from server:", message.decode('utf-8'))
+
         else:
             trace("Message ID : %3.1d UNKNOWN" % message_id)
             trace("Packet Size: ", packet_size)
             trace("ERROR: Unrecognized packet type")
 
         trace("End Packet\n-----------------")
+
         return message_id
 
     def send_request(self, in_socket, command, command_str, address):
@@ -2250,7 +2334,7 @@ class NatNetClient:
         if self.data_socket is None:
             print("Could not open data channel")
             return False
-
+        
         # Create the command socket
         self.command_socket = self.__create_command_socket()
         if self.command_socket is None:

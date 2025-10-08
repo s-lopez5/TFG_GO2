@@ -2,8 +2,8 @@ import time
 
 from typing import Callable, Any
 
-from ..idl.unitree_api.msg.dds_ import Request_ as Request
-from ..idl.unitree_api.msg.dds_ import Response_ as Response
+from sdkpy.idl.unitree_api.msg.dds_ import Request_ as Request
+from sdkpy.idl.unitree_api.msg.dds_ import Response_ as Response
 
 from .server_stub import ServerStub
 

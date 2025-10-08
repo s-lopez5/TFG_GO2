@@ -20,12 +20,18 @@ option_list = [
     TestOption(name="stand_up", id=0),         
     TestOption(name="stand_down", id=1),     
     TestOption(name="move forward 1", id=2),   
-    TestOption(name="move forward 2", id=3),         
-    TestOption(name="rotate (45grad)", id=4),    
-    TestOption(name="rotate (60grad)", id=5),
-    TestOption(name="rotate (-45grad)", id=6),
-    TestOption(name="rotate (-60grad)", id=7),  
-    TestOption(name="stop_move", id=8)       
+    TestOption(name="move forward 2", id=3),
+    TestOption(name="move forward (atras)", id=4),          
+    TestOption(name="rotate (45grad)", id=5),    
+    TestOption(name="rotate (60grad)", id=6),
+    TestOption(name="rotate (-45grad)", id=7),
+    TestOption(name="rotate (-60grad)", id=8),  
+    TestOption(name="stop_move", id=9),
+    TestOption(name="free walk", id=10),
+    TestOption(name="free bound", id=11),
+    TestOption(name="static Walk", id=12), 
+    TestOption(name="trot run", id=13),
+    TestOption(name="classic walk", id=14),
 ]
 
 class UserInterface:
@@ -59,12 +65,8 @@ class UserInterface:
         print("No matching test option found.")
 
 if __name__ == "__main__":
-    
-    if len(sys.argv) < 2:
-        print(f"Usage: python3 {sys.argv[0]} networkInterface")
-        sys.exit(-1)
 
-    ChannelFactoryInitialize(0, sys.argv[1])
+    ChannelFactoryInitialize(0, "eno1")
 
     test_option = TestOption(name=None, id=None) 
     user_interface = UserInterface()
@@ -78,6 +80,8 @@ if __name__ == "__main__":
 
         user_interface.terminal_handle()
 
+        print(f"Updated Test Option: Name = {test_option.name}, ID = {test_option.id}\n")
+
         """
         45 grad = 0.785 rad
         60 grad = 1.047 rad
@@ -89,18 +93,37 @@ if __name__ == "__main__":
         elif test_option.id == 1:
             sport_client.StandDown()
         elif test_option.id == 2:
-            sport_client.Move(1.0,0,0)
+            ret = sport_client.Move(1.0,0,0)
+            print("ret: ",ret)
         elif test_option.id == 3:
-            sport_client.Move(2.0,0,0)
+            ret = sport_client.Move(3.0,0,0)
+            print("ret: ",ret)
         elif test_option.id == 4:
-            sport_client.Move(0,0,0.785)
+            ret = sport_client.Move(-1.0,0,0)
+            print("ret: ",ret)
         elif test_option.id == 5:
-            sport_client.Move(0,0,1.047)
+            sport_client.Move(0,0,0.785)
         elif test_option.id == 6:
-            sport_client.Move(0,0,-0.785)
+            sport_client.Move(0,0,1.047)
         elif test_option.id == 7:
-            sport_client.Move(0,0,-1.047)
+            sport_client.Move(0,0,-0.785)
         elif test_option.id == 8:
+            sport_client.Move(0,0,-1.047)
+        elif test_option.id == 9:
             sport_client.StopMove()
+        elif test_option.id == 10:
+            ret = sport_client.FreeWalk()
+            print("ret: ",ret)
+        elif test_option.id == 11:
+            sport_client.FreeBound()
+        elif test_option.id == 12:
+            sport_client.StaticWalk()
+        elif test_option.id == 13:
+            sport_client.TrotRun()
+        elif test_option.id == 14:
+            sport_client.ClassicWalk()
 
         time.sleep(1)
+
+
+

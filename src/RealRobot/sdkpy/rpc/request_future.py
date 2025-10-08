@@ -1,8 +1,8 @@
 from threading import Condition, Lock
 from enum import Enum
 
-from ..idl.unitree_api.msg.dds_ import Response_ as Response
-from ..utils.future import Future, FutureResult
+from sdkpy.idl.unitree_api.msg.dds_ import Response_ as Response
+from sdkpy.utils.future import Future, FutureResult
 
 
 """

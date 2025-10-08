@@ -3,10 +3,10 @@ import json
 
 from threading import Lock
 
-from ..idl.unitree_api.msg.dds_ import Request_ as Request
-from ..idl.unitree_api.msg.dds_ import ResponseHeader_ as ResponseHeader
-from ..idl.unitree_api.msg.dds_ import ResponseStatus_ as ResponseStatus
-from ..idl.unitree_api.msg.dds_ import Response_ as Response
+from sdkpy.idl.unitree_api.msg.dds_ import Request_ as Request
+from sdkpy.idl.unitree_api.msg.dds_ import ResponseHeader_ as ResponseHeader
+from sdkpy.idl.unitree_api.msg.dds_ import ResponseStatus_ as ResponseStatus
+from sdkpy.idl.unitree_api.msg.dds_ import Response_ as Response
 
 from .internal import *
 from .server_base import ServerBase
