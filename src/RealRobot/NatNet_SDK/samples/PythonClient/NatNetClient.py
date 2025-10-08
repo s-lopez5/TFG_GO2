@@ -2094,25 +2094,37 @@ class NatNetClient:
             offset_tmp, mocap_data = self.__unpack_mocap_data(data[offset:], packet_size, major, minor) #type: ignore  # noqa E501
             offset += offset_tmp
 
-            # Print MarkerSet Data
-            if mocap_data.marker_set_data:
-                print(f"\n--- MARKER SET DATA ---")
-                print(f"Marker Set Count: {mocap_data.marker_set_data.get_marker_set_count()}")
-                for i, marker_data in enumerate(mocap_data.marker_set_data.marker_data_list):
-                    print(f"  MarkerSet {i}: {marker_data.model_name.decode('utf-8') if marker_data.model_name else 'Unknown'}")
-                    print(f"    Markers: {len(marker_data.marker_pos_list)}")
-                    for j, pos in enumerate(marker_data.marker_pos_list):
-                        print(f"      Marker {j}: X={pos[0]:.4f}, Y={pos[1]:.4f}, Z={pos[2]:.4f}")
+            if print_level >= 1:
+                # Print MarkerSet Data
+                if mocap_data.marker_set_data:
+                    print(f"\n--- MARKER SET DATA ---")
+                    print(f"Marker Set Count: {mocap_data.marker_set_data.get_marker_set_count()}")
+                    for i, marker_data in enumerate(mocap_data.marker_set_data.marker_data_list):
+                        print(f"  MarkerSet {i}: {marker_data.model_name.decode('utf-8') if marker_data.model_name else 'Unknown'}")
+                        print(f"    Markers: {len(marker_data.marker_pos_list)}")
+                        for j, pos in enumerate(marker_data.marker_pos_list):
+                            print(f"      Marker {j}: X={pos[0]:.4f}, Y={pos[1]:.4f}, Z={pos[2]:.4f}")
 
-            #Obtener datos de los markers
-            if mocap_data.marker_set_data:
-                for i, marker_data in enumerate(mocap_data.marker_set_data.marker_data_list):
-                    if marker_data.model_name.decode('utf-8') == "objetivo":
-                        if self.obj_localized != True:
-                            self.obj_localized = True
-                            self.obj_pos = marker_data.marker_pos_list[0]
-                    elif marker_data.model_name.decode('utf-8') == "Go2":
-                        self.last_pos = marker_data.marker_pos_list[0]
+                #Obtener datos de los markers
+                if mocap_data.marker_set_data:
+                    for i, marker_data in enumerate(mocap_data.marker_set_data.marker_data_list):
+                        if marker_data.model_name.decode('utf-8') == "objetivo":
+                            if self.obj_localized != True:
+                                self.obj_localized = True
+
+                                x1, y1, z1 = marker_data.marker_pos_list[0]
+                                x2, y2, z2 = marker_data.marker_pos_list[1]
+                                x3, y3, z3 = marker_data.marker_pos_list[2]
+
+                                self.obj_pos = [(x1 + x2 + x3) / 3, y1, (z1 + z2 + z3) / 3]
+
+
+                        elif marker_data.model_name.decode('utf-8') == "Go2":
+                            x1, y1, z1 = marker_data.marker_pos_list[0]
+                            x2, y2, z2 = marker_data.marker_pos_list[1]
+                            x3, y3, z3 = marker_data.marker_pos_list[2]
+
+                            self.last_pos = [(x1 + x2 + x3) / 3, y1, (z1 + z2 + z3) / 3]
             
             print("\nLast Position: ", self.last_pos)
             
