@@ -105,20 +105,19 @@ def is_esc_pressed():
 
 def random_action():
     """
-    Devuelve un número aleatorio entre 0 y 5 (ambos inclusive).
+    Devuelve un número aleatorio entre 0 y 2 (ambos inclusive).
     No devuelve el mismo número tres veces consecutivas.
     """
-
     global action_history
 
     if len(action_history) >= 2 and action_history[-1] == action_history[-2]:
         # Si las dos últimas acciones son iguales, elegir una acción diferente
         action_rep = action_history[-1]
-        action = random.randint(0, 3)
+        action = random.randint(0, 5)
         while action == action_rep:
-            action = random.randint(0, 3)
+            action = random.randint(0, 5)
     else:
-        action = random.randint(0, 3)
+        action = random.randint(0, 5)
     
     #Agregar y mantener solo las dos últimas acciones en el historial
     action_history.append(action)
@@ -126,6 +125,40 @@ def random_action():
         action_history.pop(0) 
 
     return action
+
+def out_of_limits():
+    """
+    Cuando el robot se sale de los límites establecidos, esta función lo detiene,
+    lo hace retroceder, girar sobre si mismo 180 grados.
+    """
+    sport_client.StopMove()
+    time.sleep(2)
+    sport_client.Move(-1.0,0,0)
+    time.sleep(3)
+    sport_client.Move(0,0,3.14159)
+    time.sleep(3)
+    
+    return
+
+def distancia(p1, p2):
+    """
+    Calcula la distancia entre el robot y el objetivo, tomando como referencia el punto medio 
+    del objetivo y el marker delantero del robot.
+    """
+    return np.sqrt((p1[0][0] - p2[0])**2 + (p1[0][2] - p2[2])**2)
+
+def alfa_obj(p1, p2):
+    """
+    Calcula el ángulo entre el robot y el objetivo, tomando como referencia el punto medio del objetivo 
+    y el marker delantero del robot.
+    """
+    return np.arctan2(p1[0][2] - p2[2], p1[0][0] - p2[0])
+
+def alfa_robot(p):
+    """
+    Calcula el ángulo de orientación del robot, tomando como referencia el marker delantero y trasero del robot.
+    """
+    return np.arctan2(p[0][2] - p[1][2], p[0][0] - p[1][0])
 
 def receive_new_frame_with_data(data_dict):
     order_list = ["frameNumber", "markerSetCount", "unlabeledMarkersCount", #type: ignore  # noqa F841
@@ -184,13 +217,22 @@ if __name__ == "__main__":
     sport_client.SetTimeout(10.0)
     sport_client.Init()
 
-    actual_pos = []     #Posicion actual del robot
-    trainnig_data = []  #Lista de datos de entrenamiento
+    actual_pos = []         #Posicion actual del robot
+    obj_pos = []            #Posicion del objetivo
+    trainnig_data = []      #Lista de datos de entrenamiento
+    trainnig_data_2 = []    #Lista de datos de entrenamiento con posiciones absolutas
 
     actual_pos = streaming_client.get_last_pos()
+    obj_pos = streaming_client.get_objetive_pos()
 
     print("Presiona ESC para salir del bucle y guardar datos...")
     print("-" * 50)
+
+    print("\nIniciando...\n")
+    sport_client.StandUp()
+    time.sleep(2)
+    sport_client.ClassicWalk(True)
+    time.sleep(2)
 
     while True:
 
@@ -200,13 +242,19 @@ if __name__ == "__main__":
             break
 
         obs_t = actual_pos  #Obtenemos las observaciones en T
+        distanciaT = distancia(obs_t, obj_pos)
+        alfa_objT = alfa_obj(obs_t, obj_pos)
+        alfa_robotT = alfa_robot(obs_t)
 
-        #action = random_action()  #Obtenemos una acción aleatoria
 
+        action = random_action()  #Obtenemos una acción aleatoria
+
+        """
         user_interface.terminal_handle()
         action = test_option.id
-
-        datos_entrada = np.concat([obs_t, action])
+        """
+        datos_entrada = np.concat([distanciaT, alfa_objT, alfa_robotT, action])
+        datos_entrada_2 = np.concat([obs_t, obj_pos, action])
 
         """
         45 grad = 0.785 rad
@@ -214,41 +262,69 @@ if __name__ == "__main__":
         90 grad = 1.57 rad
         """
 
-        if test_option.id == 0:
-            sport_client.Move(1.0,0,0)      #Avanzar
-        elif test_option.id == 1:
-            sport_client.Move(-1.0,0,0)     #Retroceder
-        elif test_option.id == 2:
+        if action == 0:
+            sport_client.Move(0.4,0,0)      #Avanzar
+        elif action == 1:
+            sport_client.Move(0.7,0,0)      #Avanzar más rápido
+        elif action == 2:
+            sport_client.Move(0,0,0.785)    #Girar 45 grados a la derecha
+        elif action == 3:
             sport_client.Move(0,0,1.047)    #Girar 60 grados a la derecha
-        elif test_option.id == 3:
+        elif action == 4:
+            sport_client.Move(0,0,-0.785)    #Girar 45 grados a la izquierda    
+        elif action == 5:
             sport_client.Move(0,0,-1.047)   #Girar 60 grados a la izquierda
         
         """
         if action == 0:
-            sport_client.Move(1.0,0,0)      #Avanzar
+            sport_client.Move(0.4,0,0)      #Avanzar
         elif action == 1:
-            sport_client.Move(-1.0,0,0)     #Retroceder
+            sport_client.Move(0.7,0,0)      #Avanzar más rápido
         elif action == 2:
-            sport_client.Move(0,0,1.047)    #Girar 60 grados a la derecha
+            sport_client.Move(0,0,0.785)    #Girar 45 grados a la derecha
         elif action == 3:
+            sport_client.Move(0,0,1.047)    #Girar 60 grados a la derecha
+        elif action == 4:
+            sport_client.Move(0,0,-0.785)    #Girar 45 grados a la izquierda    
+        elif action == 5:
             sport_client.Move(0,0,-1.047)   #Girar 60 grados a la izquierda
+
         """
+
         #Esperar a que acabe el movimiento
         time.sleep(3)
-        
-        actual_pos = streaming_client.get_last_pos()
-        
+
+        if actual_pos[0][0] >= 1 or actual_pos[0][0] <= 1 or actual_pos[0][2] >= 1 or actual_pos[0][2] <= 1:
+            out_of_limits()
+            actual_pos = streaming_client.get_last_pos()
+            continue
+        else:
+            actual_pos = streaming_client.get_last_pos()
+
         print("\n\n")
         print(f"Posición actual: x={actual_pos[0][0]}, y={actual_pos[0][1]}, z={actual_pos[0][2]}")
-        print(f"Posición actual: x={actual_pos[1][0]}, y={actual_pos[1][1]}, z={actual_pos[1][2]}")
         print("\n\n")
 
         obs_t1 = actual_pos  #Obtenemos las observaciones en T+1
-        trainnig_data.append((datos_entrada, obs_t1))
+        
+        distanciaT1 = distancia(obs_t1, obj_pos)
+        alfa_objT1 = alfa_obj(obs_t1, obj_pos)
+        alfa_robotT1 = alfa_robot(obs_t1)
+        
+        trainnig_data.append((datos_entrada, distanciaT1, alfa_objT1, alfa_robotT1))
+        trainnig_data_2.append((datos_entrada_2, obs_t1, obj_pos))
     
+    sport_client.StopMove()
+    time.sleep(2)
+    sport_client.StandDown()
+    time.sleep(3)
+
     print(f"Total de transiciones recolectadas: {len(trainnig_data)}")
     print(f"Transiciones recolectadas: {trainnig_data}")
 
     #Guardar los datos de entrenamiento en un archivo pickle
     with open("lista_obs.pkl", "wb") as f:
         pickle.dump(trainnig_data, f)
+
+    with open("lista_obs_posicion_abs.pkl", "wb") as f:
+        pickle.dump(trainnig_data_2, f)

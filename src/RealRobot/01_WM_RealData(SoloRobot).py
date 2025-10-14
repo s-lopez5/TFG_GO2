@@ -19,19 +19,21 @@ class TestOption:
 option_list = [
     TestOption(name="stand_up", id=0),         
     TestOption(name="stand_down", id=1),     
-    TestOption(name="move forward 1", id=2),   
-    TestOption(name="move forward 2", id=3),
-    TestOption(name="move forward (atras)", id=4),          
-    TestOption(name="rotate (45grad)", id=5),    
-    TestOption(name="rotate (60grad)", id=6),
-    TestOption(name="rotate (-45grad)", id=7),
-    TestOption(name="rotate (-60grad)", id=8),  
-    TestOption(name="stop_move", id=9),
-    TestOption(name="free walk", id=10),
-    TestOption(name="free bound", id=11),
-    TestOption(name="static Walk", id=12), 
+    TestOption(name="move forward", id=2),   
+    TestOption(name="Retroceder", id=3),
+    TestOption(name="rotete(60grad)", id=4),          
+    TestOption(name="rotate (-60grad)", id=5),    
+    TestOption(name="StopMove", id=6),
+    TestOption(name="FreeWalk", id=7),
+    TestOption(name="FreeBound(True)", id=8),  
+    TestOption(name="FreeBound(False)", id=9),
+    TestOption(name="freeJump(True)", id=10),
+    TestOption(name="CrossStep(True)", id=11),
+    TestOption(name="ClassikWalk(True)", id=12), 
     TestOption(name="trot run", id=13),
-    TestOption(name="classic walk", id=14),
+    TestOption(name="StaticWalk", id=14),
+    TestOption(name="EconomicGait", id=15),
+    TestOption(name="Damp", id=15),
 ]
 
 class UserInterface:
@@ -86,6 +88,7 @@ if __name__ == "__main__":
         45 grad = 0.785 rad
         60 grad = 1.047 rad
         90 grad = 1.57 rad
+        180 grad = 3.14159 rad
         """
 
         if test_option.id == 0:
@@ -93,35 +96,46 @@ if __name__ == "__main__":
         elif test_option.id == 1:
             sport_client.StandDown()
         elif test_option.id == 2:
-            ret = sport_client.Move(1.0,0,0)
-            print("ret: ",ret)
+            sport_client.Move(0.7,0,0)
         elif test_option.id == 3:
-            ret = sport_client.Move(3.0,0,0)
-            print("ret: ",ret)
+            sport_client.Move(-1.0,0,0)
         elif test_option.id == 4:
-            ret = sport_client.Move(-1.0,0,0)
-            print("ret: ",ret)
+            sport_client.Move(0,0,-1.047)
         elif test_option.id == 5:
             sport_client.Move(0,0,0.785)
         elif test_option.id == 6:
-            sport_client.Move(0,0,1.047)
-        elif test_option.id == 7:
-            sport_client.Move(0,0,-0.785)
-        elif test_option.id == 8:
-            sport_client.Move(0,0,-1.047)
-        elif test_option.id == 9:
             sport_client.StopMove()
+        elif test_option.id == 7:
+            #No se que hace
+            sport_client.Move(0,0,1.57)
+        elif test_option.id == 8:
+            #Bound run mode(Trotar)
+            sport_client.FreeBound(True)
+        elif test_option.id == 9:
+            #Bound agile mode
+            sport_client.FreeBound(False)
         elif test_option.id == 10:
-            ret = sport_client.FreeWalk()
-            print("ret: ",ret)
+            #Bound jump mode
+            sport_client.FreeJump(True)
         elif test_option.id == 11:
-            sport_client.FreeBound()
+            #Modo paso cruzado
+            sport_client.CrossStep(True)
         elif test_option.id == 12:
-            sport_client.StaticWalk()
+            #Modo marcha clásico        (Este)
+            sport_client.ClassicWalk(True)
         elif test_option.id == 13:
+            #Entra en el modo de correr normal
             sport_client.TrotRun()
         elif test_option.id == 14:
-            sport_client.ClassicWalk()
+            #Entra en el modo de caminar normal
+            sport_client.StaticWalk()
+        elif test_option.id == 15:
+            #Entra en el modo resistencia normal
+            sport_client.EconomicGait()
+        elif test_option.id == 16:
+            #Entra en el estado de amortiguación
+            sport_client.Damp()
+        
 
         time.sleep(1)
 
