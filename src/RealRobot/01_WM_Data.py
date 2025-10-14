@@ -105,7 +105,7 @@ def is_esc_pressed():
 
 def random_action():
     """
-    Devuelve un número aleatorio entre 0 y 2 (ambos inclusive).
+    Devuelve un número aleatorio entre 0 y 5 (ambos inclusive).
     No devuelve el mismo número tres veces consecutivas.
     """
     global action_history
@@ -133,9 +133,9 @@ def out_of_limits():
     """
     sport_client.StopMove()
     time.sleep(2)
-    sport_client.Move(-1.0,0,0)
-    time.sleep(3)
     sport_client.Move(0,0,3.14159)
+    time.sleep(3)
+    sport_client.Move(0.7,0,0)
     time.sleep(3)
     
     return
@@ -218,12 +218,9 @@ if __name__ == "__main__":
     sport_client.Init()
 
     actual_pos = []         #Posicion actual del robot
-    obj_pos = []            #Posicion del objetivo
+    objetive_pos = []       #Posicion del objetivo
     trainnig_data = []      #Lista de datos de entrenamiento
     trainnig_data_2 = []    #Lista de datos de entrenamiento con posiciones absolutas
-
-    actual_pos = streaming_client.get_last_pos()
-    obj_pos = streaming_client.get_objetive_pos()
 
     print("Presiona ESC para salir del bucle y guardar datos...")
     print("-" * 50)
@@ -234,6 +231,9 @@ if __name__ == "__main__":
     sport_client.ClassicWalk(True)
     time.sleep(2)
 
+    actual_pos = streaming_client.get_last_pos()
+    objetive_pos = streaming_client.get_objetive_pos()
+
     while True:
 
         # Verificar si se presionó ESC
@@ -242,19 +242,19 @@ if __name__ == "__main__":
             break
 
         obs_t = actual_pos  #Obtenemos las observaciones en T
-        distanciaT = distancia(obs_t, obj_pos)
-        alfa_objT = alfa_obj(obs_t, obj_pos)
+        distanciaT = distancia(obs_t, objetive_pos)
+        alfa_objT = alfa_obj(obs_t, objetive_pos)
         alfa_robotT = alfa_robot(obs_t)
 
 
-        action = random_action()  #Obtenemos una acción aleatoria
+        #action = random_action()  #Obtenemos una acción aleatoria
 
-        """
+        
         user_interface.terminal_handle()
         action = test_option.id
-        """
+        
         datos_entrada = np.concat([distanciaT, alfa_objT, alfa_robotT, action])
-        datos_entrada_2 = np.concat([obs_t, obj_pos, action])
+        datos_entrada_2 = np.concat([obs_t, objetive_pos, action])
 
         """
         45 grad = 0.785 rad
@@ -293,26 +293,32 @@ if __name__ == "__main__":
 
         #Esperar a que acabe el movimiento
         time.sleep(3)
-
-        if actual_pos[0][0] >= 1 or actual_pos[0][0] <= 1 or actual_pos[0][2] >= 1 or actual_pos[0][2] <= 1:
+        
+        #Comprobar si el robot se ha salido de los límites establecidos
+        if actual_pos[0][0] >= 2.0 or actual_pos[0][0] <= -1.1 or actual_pos[0][2] >= 1.25 or actual_pos[0][2] <= -1.4:
             out_of_limits()
             actual_pos = streaming_client.get_last_pos()
             continue
         else:
             actual_pos = streaming_client.get_last_pos()
-
-        print("\n\n")
-        print(f"Posición actual: x={actual_pos[0][0]}, y={actual_pos[0][1]}, z={actual_pos[0][2]}")
-        print("\n\n")
-
-        obs_t1 = actual_pos  #Obtenemos las observaciones en T+1
         
-        distanciaT1 = distancia(obs_t1, obj_pos)
-        alfa_objT1 = alfa_obj(obs_t1, obj_pos)
+
+        print("\n\n")
+        print("Observaciones en T: x={obs_t[0][0]}, y={obs_t[0][1]}, z={obs_t[0][2]}\nx={obs_t[1][0]}, y={obs_t[1][1]}, z={obs_t[1][2]}\nx={obs_t[2][0]}, y={obs_t[2][1]}, z={obs_t[2][2]}")
+        print(f"Observaciones en T: distancia={distanciaT}, alfa_obj={alfa_objT}, alfa_robot={alfa_robotT}")
+        print(f"Acción tomada: {action}")
+        print(f"Posición actual: x={actual_pos[0][0]}, y={actual_pos[0][1]}, z={actual_pos[0][2]}\nx={actual_pos[1][0]}, y={actual_pos[1][1]}, z={actual_pos[1][2]}\nx={actual_pos[2][0]}, y={actual_pos[2][1]}, z={actual_pos[2][2]}")
+        print("\n\n")
+
+        #Obtenemos las observaciones en T+1
+        obs_t1 = actual_pos  
+        
+        distanciaT1 = distancia(obs_t1, objetive_pos)
+        alfa_objT1 = alfa_obj(obs_t1, objetive_pos)
         alfa_robotT1 = alfa_robot(obs_t1)
         
         trainnig_data.append((datos_entrada, distanciaT1, alfa_objT1, alfa_robotT1))
-        trainnig_data_2.append((datos_entrada_2, obs_t1, obj_pos))
+        trainnig_data_2.append((datos_entrada_2, obs_t1, objetive_pos))
     
     sport_client.StopMove()
     time.sleep(2)

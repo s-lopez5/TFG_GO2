@@ -2108,7 +2108,7 @@ class NatNetClient:
                 #Obtener datos de los markers
                 if mocap_data.marker_set_data:
                     for i, marker_data in enumerate(mocap_data.marker_set_data.marker_data_list):
-                        if marker_data.model_name.decode('utf-8') == "objetivo":
+                        if marker_data.model_name.decode('utf-8') == "Objetivo":
                             if self.obj_localized != True:
                                 self.obj_localized = True
 
@@ -2120,13 +2120,11 @@ class NatNetClient:
 
 
                         elif marker_data.model_name.decode('utf-8') == "Go2":
-                            x1, y1, z1 = marker_data.marker_pos_list[0]
-                            x2, y2, z2 = marker_data.marker_pos_list[1]
-                            x3, y3, z3 = marker_data.marker_pos_list[2]
-
-                            self.last_pos = [(x1 + x2 + x3) / 3, y1, (z1 + z2 + z3) / 3]
+                            self.last_pos = marker_data.marker_pos_list
+                            
             
-            print("\nLast Position: ", self.last_pos)
+            #print("\nLast Position: ", self.last_pos)
+            #print("\nObjetive Position: ", self.obj_pos)
             
             # get a string version of the data for output
             """
