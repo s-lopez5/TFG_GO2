@@ -125,7 +125,7 @@ def receive_new_frame_with_data(data_dict):
                 out_string += str(data_dict[key]) + " "
             out_string += "/"
         #print(out_string)
- 
+
 if __name__ == "__main__":
     
     ChannelFactoryInitialize(0, "eno1")
@@ -159,7 +159,7 @@ if __name__ == "__main__":
             print("...")
         finally:
             print("exiting")
-        
+
     sport_client = SportClient()  
     sport_client.SetTimeout(10.0)
     sport_client.Init()
@@ -182,7 +182,9 @@ if __name__ == "__main__":
     actual_pos = streaming_client.get_last_pos()
     objetive_pos = streaming_client.get_objetive_pos()
 
-    while True:
+    print(f"Posición inicial del robot: {actual_pos}\n")
+
+    for i in range(5):
 
         # Verificar si se presionó ESC
         if is_esc_pressed():
@@ -205,13 +207,18 @@ if __name__ == "__main__":
                             objetive_pos[0], objetive_pos[1], objetive_pos[2],  # Objetivo
                             action
                         ])
+        
+
+        print("\n\n")
+        print(action)
+        print("\n\n")
 
         """
         45 grad = 0.785 rad
         60 grad = 1.047 rad
         90 grad = 1.57 rad
         """
-        
+
         if action == 0:
             sport_client.Move(0.4,0,0)      #Avanzar
         elif action == 1:
@@ -235,14 +242,14 @@ if __name__ == "__main__":
             continue
         else:
             actual_pos = streaming_client.get_last_pos()
-
+        
         #Obtenemos las observaciones en T+1
         obs_t1 = actual_pos  
-        
+
         distanciaT1 = distancia(obs_t1, objetive_pos)
         alfa_objT1 = alfa_obj(obs_t1, objetive_pos)
         alfa_robotT1 = alfa_robot(obs_t1)
-
+        
         print("\n")
         print(f"Observaciones en T:\n x={obs_t[0][0]}, y={obs_t[0][1]}, z={obs_t[0][2]}\nx={obs_t[1][0]}, y={obs_t[1][1]}, z={obs_t[1][2]}\nx={obs_t[2][0]}, y={obs_t[2][1]}, z={obs_t[2][2]}")
         print(f"Observaciones en T: distancia={distanciaT}, alfa_obj={alfa_objT}, alfa_robot={alfa_robotT}")
@@ -273,7 +280,6 @@ if __name__ == "__main__":
             trainnig_data_2.append((datos_entrada_2, datos_salida_2))
             break
             
-
         datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
         trainnig_data.append((datos_entrada, datos_salida))
         
@@ -284,9 +290,7 @@ if __name__ == "__main__":
                             objetive_pos[0], objetive_pos[1], objetive_pos[2]  # Objetivo
                         ])
         trainnig_data_2.append((datos_entrada_2, datos_salida_2))
-
-        
-        
+    
     sport_client.StopMove()
     time.sleep(2)
     sport_client.StandDown()
@@ -304,7 +308,11 @@ if __name__ == "__main__":
             'inputs': inputs,
             'outputs': outputs
         }, f)
-    
+
+    #Guardar los datos de entrenamiento en un archivo pickle
+    with open("lista_obs.pkl", "wb") as f:
+        pickle.dump(trainnig_data, f)
+
     with open("lista_obs_posicion_abs.pkl", "wb") as f:
         pickle.dump(trainnig_data_2, f)
     

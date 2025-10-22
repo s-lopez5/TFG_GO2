@@ -5,3 +5,8 @@ Abajo derecha = x=-1.6 z=-1.4
 abajo Izq =  X=2.24 Z=-1.5
 arriba Izq = X=2.0 Z=1.5
 arriba der = X=-1.17 Z=1.25
+
+
+Distancia obj:
+X = 1.65 - 1.18 = 0.47
+Z = 0.73 - 0.61 = 0.12
