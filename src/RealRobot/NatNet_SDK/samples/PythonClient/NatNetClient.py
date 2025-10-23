@@ -2355,8 +2355,8 @@ class NatNetClient:
         self.stop_threads = False
 
         # Create a separate thread for receiving data packets
-        self.data_thread = Thread(target=self.__data_thread_function, args=(self.data_socket, lambda: self.stop_threads, lambda: self.print_level,)) #type: ignore  # noqa E501
-        self.command_thread = Thread(target=self.__command_thread_function, args=(self.command_socket, lambda: self.stop_threads, lambda: self.print_level, thread_option,)) #type: ignore  # noqa E501
+        self.data_thread = Thread(target=self.__data_thread_function, args=(self.data_socket, lambda: self.stop_threads, lambda: self.print_level,), daemon=True) #type: ignore  # noqa E501
+        self.command_thread = Thread(target=self.__command_thread_function, args=(self.command_socket, lambda: self.stop_threads, lambda: self.print_level, thread_option,), daemon=True) #type: ignore  # noqa E501
         if thread_option == 'd':
             print("starting data thread")
             self.command_thread.start()
@@ -2385,8 +2385,12 @@ class NatNetClient:
         # an exception and break the loop
         self.command_socket.close()
         self.data_socket.close()
-        # attempt to join the threads back.
+        # attempt to join the threads back with timeout
         if self.command_thread.is_alive():
-            self.command_thread.join()
+            self.command_thread.join(timeout=1)
         if self.data_thread.is_alive():
-            self.data_thread.join()
+            self.data_thread.join(timeout=1)
+
+        # fallback: kill sockets and release memory
+        self.command_socket = None
+        self.data_socket = None

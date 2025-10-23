@@ -4,9 +4,6 @@ import os
 import numpy as np
 import random
 import pickle
-import select
-import termios
-import tty
 from dataclasses import dataclass
 
 #Añadir el path del SDK de Unitree
@@ -31,28 +28,6 @@ from NatNet_SDK.samples.PythonClient.MoCapData import MoCapData
 
 action_history = []  #Historial de acciones tomadas
 
-def is_esc_pressed():
-    """
-    Detecta si se ha presionado la tecla ESC de forma no bloqueante.
-    Retorna True si se presionó ESC, False en caso contrario.
-    """
-    # Guardar configuración original del terminal
-    old_settings = termios.tcgetattr(sys.stdin)
-    try:
-        # Configurar terminal en modo raw para detectar teclas
-        tty.setcbreak(sys.stdin.fileno())
-        
-        # Verificar si hay entrada disponible (sin bloquear)
-        if select.select([sys.stdin], [], [], 0)[0]:
-            key = sys.stdin.read(1)
-            # ESC tiene código ASCII 27
-            if ord(key) == 27:
-                return True
-    finally:
-        # Restaurar configuración original del terminal
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
-    
-    return False
 
 def random_action():
     """
@@ -170,9 +145,6 @@ if __name__ == "__main__":
     trainnig_data = []      #Lista de datos de entrenamiento
     trainnig_data_2 = []    #Lista de datos de entrenamiento con posiciones absolutas
 
-    print("Presiona ESC para salir del bucle y guardar datos...")
-    print("-" * 50)
-
     print("\nIniciando...\n")
     sport_client.StandUp()
     time.sleep(2)
@@ -183,11 +155,6 @@ if __name__ == "__main__":
     objetive_pos = streaming_client.get_objetive_pos()
 
     while True:
-
-        # Verificar si se presionó ESC
-        if is_esc_pressed():
-            print("\nSaliendo del bucle...")
-            break
 
         obs_t = actual_pos  #Obtenemos las observaciones en T
         distanciaT = distancia(obs_t, objetive_pos)

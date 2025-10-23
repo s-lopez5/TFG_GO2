@@ -4,9 +4,7 @@ import os
 import numpy as np
 import random
 import pickle
-import select
-import termios
-import tty
+import threading
 from dataclasses import dataclass
 
 #Añadir el path del SDK de Unitree
@@ -29,30 +27,74 @@ from NatNet_SDK.samples.PythonClient.NatNetClient import NatNetClient
 from NatNet_SDK.samples.PythonClient.DataDescriptions import DataDescriptions
 from NatNet_SDK.samples.PythonClient.MoCapData import MoCapData
 
+from dataclasses import dataclass
+
+@dataclass
+class TestOption:
+    name: str
+    id: int
+
+option_list = [
+    TestOption(name="stand_up", id=0),         
+    TestOption(name="stand_down", id=1),     
+    TestOption(name="move forward", id=2),   
+    TestOption(name="Retroceder", id=3),
+    TestOption(name="rotete(60grad)", id=4),          
+    TestOption(name="rotate (-60grad)", id=5),    
+    TestOption(name="StopMove", id=6),
+    TestOption(name="FreeWalk", id=7),
+    TestOption(name="FreeBound(True)", id=8),  
+    TestOption(name="FreeBound(False)", id=9),
+    TestOption(name="freeJump(True)", id=10),
+    TestOption(name="CrossStep(True)", id=11),
+    TestOption(name="ClassikWalk(True)", id=12), 
+    TestOption(name="trot run", id=13),
+    TestOption(name="StaticWalk", id=14),
+    TestOption(name="EconomicGait", id=15),
+    TestOption(name="Damp", id=15),
+]
+
+# Variable global para controlar la salida con ESC
+exit_requested = False
+
 action_history = []  #Historial de acciones tomadas
 
-def is_esc_pressed():
-    """
-    Detecta si se ha presionado la tecla ESC de forma no bloqueante.
-    Retorna True si se presionó ESC, False en caso contrario.
-    """
-    # Guardar configuración original del terminal
-    old_settings = termios.tcgetattr(sys.stdin)
-    try:
-        # Configurar terminal en modo raw para detectar teclas
-        tty.setcbreak(sys.stdin.fileno())
+class UserInterface:
+    def __init__(self):
+        self.test_option_ = None
+
+    def convert_to_int(self, input_str):
+        try:
+            return int(input_str)
+        except ValueError:
+            return None
+
+    def terminal_handle(self):
         
-        # Verificar si hay entrada disponible (sin bloquear)
-        if select.select([sys.stdin], [], [], 0)[0]:
-            key = sys.stdin.read(1)
-            # ESC tiene código ASCII 27
-            if ord(key) == 27:
-                return True
-    finally:
-        # Restaurar configuración original del terminal
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
-    
-    return False
+        input_str = input("\nEnter id (or list): \n")
+
+        # Opción para salir escribiendo 'exit' o 'quit'
+        if input_str.lower() in ['exit', 'quit', 'salir']:
+            global exit_requested
+            exit_requested = True
+            print("\nSaliendo del programa...\n")
+            return
+
+        if input_str == "list":
+            self.test_option_.name = None
+            self.test_option_.id = None
+            for option in option_list:
+                print(f"{option.name}, id: {option.id}")
+            return
+
+        for option in option_list:
+            if input_str == option.name or self.convert_to_int(input_str) == option.id:
+                self.test_option_.name = option.name
+                self.test_option_.id = option.id
+                print(f"Test: {self.test_option_.name}, test_id: {self.test_option_.id}")
+                return
+
+        print("No matching test option found.")
 
 def random_action():
     """
@@ -160,6 +202,11 @@ if __name__ == "__main__":
         finally:
             print("exiting")
 
+    
+    test_option = TestOption(name=None, id=None) 
+    user_interface = UserInterface()
+    user_interface.test_option_ = test_option
+
     sport_client = SportClient()  
     sport_client.SetTimeout(10.0)
     sport_client.Init()
@@ -170,34 +217,33 @@ if __name__ == "__main__":
     trainnig_data = []      #Lista de datos de entrenamiento
     trainnig_data_2 = []    #Lista de datos de entrenamiento con posiciones absolutas
 
-    print("Presiona ESC para salir del bucle y guardar datos...")
-    print("-" * 50)
-
     print("\nIniciando...\n")
     sport_client.StandUp()
     time.sleep(2)
     sport_client.ClassicWalk(True)
     time.sleep(2)
-
+    
     actual_pos = streaming_client.get_last_pos()
     objetive_pos = streaming_client.get_objetive_pos()
 
     print(f"Posición inicial del robot: {actual_pos}\n")
 
-    for i in range(5):
-
-        # Verificar si se presionó ESC
-        if is_esc_pressed():
-            print("\nSaliendo del bucle...")
+    for i in range(20):
+        
+        #Verificar si se presionó ESC
+        if exit_requested:
+            print("\nSaliendo del bucle por petición del usuario...\n")
             break
-
+    
         obs_t = actual_pos  #Obtenemos las observaciones en T
         distanciaT = distancia(obs_t, objetive_pos)
         alfa_objT = alfa_obj(obs_t, objetive_pos)
         alfa_robotT = alfa_robot(obs_t)
 
+        user_interface.terminal_handle()
+        action = test_option.id
 
-        action = random_action()  #Obtenemos una acción aleatoria
+        #action = random_action()  #Obtenemos una acción aleatoria
 
         datos_entrada = np.array([distanciaT, alfa_objT, alfa_robotT, action])
         datos_entrada_2 = np.array([
@@ -209,9 +255,9 @@ if __name__ == "__main__":
                         ])
         
 
-        print("\n\n")
+        print("\n")
         print(action)
-        print("\n\n")
+        print("\n")
 
         """
         45 grad = 0.785 rad
@@ -231,6 +277,7 @@ if __name__ == "__main__":
             sport_client.Move(0,0,-0.785)    #Girar 45 grados a la izquierda    
         elif action == 5:
             sport_client.Move(0,0,-1.047)   #Girar 60 grados a la izquierda
+            
         
         #Esperar a que acabe el movimiento
         time.sleep(3)
