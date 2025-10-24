@@ -22,7 +22,7 @@ with open("training_data.pkl", "rb") as f:
 X_train = data['inputs']  # Ya es np.array, listo para usar
 y_train = data['outputs']
 
-print(X_train.shape)
 print(X_train)
-print(y_train.shape)
 print(y_train)
+print(f"Nº de inputs: {X_train.shape}")
+print(f"Nº de outputs: {y_train.shape}")

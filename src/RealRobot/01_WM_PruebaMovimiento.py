@@ -228,8 +228,9 @@ if __name__ == "__main__":
 
     print(f"Posición inicial del robot: {actual_pos}\n")
 
-    for i in range(20):
-        
+    for i in range(1, 501):
+        print(f"--- Iteración {i} ---")
+
         #Verificar si se presionó ESC
         if exit_requested:
             print("\nSaliendo del bucle por petición del usuario...\n")
@@ -253,11 +254,6 @@ if __name__ == "__main__":
                             objetive_pos[0], objetive_pos[1], objetive_pos[2],  # Objetivo
                             action
                         ])
-        
-
-        print("\n")
-        print(action)
-        print("\n")
 
         """
         45 grad = 0.785 rad
@@ -268,13 +264,13 @@ if __name__ == "__main__":
         if action == 0:
             sport_client.Move(0.4,0,0)      #Avanzar
         elif action == 1:
-            sport_client.Move(0.7,0,0)      #Avanzar más rápido
+            sport_client.Move(1,0,0)      #Avanzar más rápido
         elif action == 2:
-            sport_client.Move(0,0,0.785)    #Girar 45 grados a la derecha
+            sport_client.Move(1.5,0,0)    #Girar 45 grados a la derecha
         elif action == 3:
-            sport_client.Move(0,0,1.047)    #Girar 60 grados a la derecha
+            sport_client.Move(2,0,0)    #Girar 60 grados a la derecha
         elif action == 4:
-            sport_client.Move(0,0,-0.785)    #Girar 45 grados a la izquierda    
+            sport_client.Move(3,0,0)    #Girar 45 grados a la izquierda    
         elif action == 5:
             sport_client.Move(0,0,-1.047)   #Girar 60 grados a la izquierda
             

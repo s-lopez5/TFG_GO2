@@ -154,7 +154,21 @@ if __name__ == "__main__":
     actual_pos = streaming_client.get_last_pos()
     objetive_pos = streaming_client.get_objetive_pos()
 
-    while True:
+    for i in range(1, 501):
+        
+        print(f"--- Iteración {i} ---")
+
+        if i % 50 == 0:
+            print("Guardando datos")
+            inputs = np.array([item[0] for item in trainnig_data])
+            outputs = np.array([item[1:] for item in trainnig_data])
+
+            #Guardar datos
+            with open("training_data_prob.pkl", "wb") as f:
+                pickle.dump({
+                    'inputs': inputs,
+                    'outputs': outputs
+                }, f)
 
         obs_t = actual_pos  #Obtenemos las observaciones en T
         distanciaT = distancia(obs_t, objetive_pos)
@@ -222,7 +236,8 @@ if __name__ == "__main__":
         print(actual_pos[0][0] - objetive_pos[0])
         print(actual_pos[0][2] - objetive_pos[2])
 
-        if abs(actual_pos[0][0] - objetive_pos[0]) <= 0.4 or abs(actual_pos[0][2] - objetive_pos[2]) <= 0.15:
+        #Comprobar si el robot ha alcanzado el objetivo
+        if distanciaT1 <= 0.3:
             print("Objetivo alcanzado.\n")
             finalizado = True
             sport_client.StopMove()
