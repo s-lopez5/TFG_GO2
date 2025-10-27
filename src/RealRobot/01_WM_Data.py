@@ -63,7 +63,7 @@ def out_of_limits():
     time.sleep(3)
     sport_client.Move(0.7,0,0)
     time.sleep(3)
-    
+
     return
 
 def distancia(p1, p2):
@@ -158,10 +158,10 @@ if __name__ == "__main__":
         
         print(f"--- Iteración {i} ---")
 
-        if i % 50 == 0:
+        if i % 25 == 0:
             print("Guardando datos")
             inputs = np.array([item[0] for item in trainnig_data])
-            outputs = np.array([item[1:] for item in trainnig_data])
+            outputs = np.array([item[1] for item in trainnig_data])
 
             #Guardar datos
             with open("training_data_prob.pkl", "wb") as f:
@@ -278,7 +278,7 @@ if __name__ == "__main__":
     print(f"Transiciones recolectadas: {trainnig_data}")
 
     inputs = np.array([item[0] for item in trainnig_data])
-    outputs = np.array([item[1:] for item in trainnig_data])
+    outputs = np.array([item[1] for item in trainnig_data])
 
     # Guardar
     with open("training_data.pkl", "wb") as f:
