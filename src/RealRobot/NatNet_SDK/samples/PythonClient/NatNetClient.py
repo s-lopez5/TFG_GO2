@@ -2121,7 +2121,7 @@ class NatNetClient:
 
                         elif marker_data.model_name.decode('utf-8') == "Go2":
                             self.last_pos = marker_data.marker_pos_list
-            #print(self.obj_pos)                
+                print(self.obj_pos)                
             
             #print("\nLast Position: ", self.last_pos)
             #print("\nObjetive Position: ", self.obj_pos)

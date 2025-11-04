@@ -32,7 +32,7 @@ if __name__ == "__main__":
     
     optionsDict = {}
     optionsDict["clientAddress"] = "192.168.123.149"
-    optionsDict["serverAddress"] = "192.168.123.112"
+    optionsDict["serverAddress"] = "192.168.123.164"
     optionsDict["use_multicast"] = False
     optionsDict["stream_type"] = 'd'
     stream_type_arg = None
