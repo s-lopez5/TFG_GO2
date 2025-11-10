@@ -175,7 +175,7 @@ if __name__ == "__main__":
     #Crear un diccionario con las opciones de conexión
     optionsDict = {}
     optionsDict["clientAddress"] = "192.168.123.149"
-    optionsDict["serverAddress"] = "192.168.123.112"
+    optionsDict["serverAddress"] = "192.168.123.164"
     optionsDict["use_multicast"] = False
     optionsDict["stream_type"] = 'd'
     stream_type_arg = None
@@ -201,6 +201,18 @@ if __name__ == "__main__":
             print("...")
         finally:
             print("exiting")
+    
+    print("Esperando conexión...")
+    time.sleep(2)  #Dar tiempo para conectar
+
+    if streaming_client.connected() is False:
+        print("ERROR: Could not connect properly.  Check that Motive streaming is on.") #type: ignore  # noqa F501
+        try:
+            sys.exit(2)
+        except SystemExit:
+            print("...")
+        finally:
+            print("exiting")
 
     
     test_option = TestOption(name=None, id=None) 
@@ -222,7 +234,9 @@ if __name__ == "__main__":
     time.sleep(2)
     sport_client.ClassicWalk(True)
     time.sleep(2)
-    
+
+    print("\nRecibiendo datos... (Ctrl+C para salir)\n")
+
     actual_pos = streaming_client.get_last_pos()
     objetive_pos = streaming_client.get_objetive_pos()
 
@@ -247,13 +261,6 @@ if __name__ == "__main__":
         #action = random_action()  #Obtenemos una acción aleatoria
 
         datos_entrada = np.array([distanciaT, alfa_objT, alfa_robotT, action])
-        datos_entrada_2 = np.array([
-                            obs_t[0][0], obs_t[0][1], obs_t[0][2],  # Primer marcador
-                            obs_t[1][0], obs_t[1][1], obs_t[1][2],  # Segundo marcador
-                            obs_t[2][0], obs_t[2][1], obs_t[2][2],  # Tercer marcador
-                            objetive_pos[0], objetive_pos[1], objetive_pos[2],  # Objetivo
-                            action
-                        ])
 
         """
         45 grad = 0.785 rad
@@ -264,13 +271,13 @@ if __name__ == "__main__":
         if action == 0:
             sport_client.Move(0.4,0,0)      #Avanzar
         elif action == 1:
-            sport_client.Move(1,0,0)      #Avanzar más rápido
+            sport_client.Move(0.7,0,0)      #Avanzar más rápido
         elif action == 2:
-            sport_client.Move(1.5,0,0)    #Girar 45 grados a la derecha
+            sport_client.Move(0,0,0.785)    #Girar 45 grados a la derecha
         elif action == 3:
-            sport_client.Move(2,0,0)    #Girar 60 grados a la derecha
+            sport_client.Move(0,0,1.047)    #Girar 60 grados a la derecha
         elif action == 4:
-            sport_client.Move(3,0,0)    #Girar 45 grados a la izquierda    
+            sport_client.Move(0,0,-0.785)    #Girar 45 grados a la izquierda    
         elif action == 5:
             sport_client.Move(0,0,-1.047)   #Girar 60 grados a la izquierda
             
@@ -311,26 +318,10 @@ if __name__ == "__main__":
             
             datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
             trainnig_data.append((datos_entrada, datos_salida))
-            
-            datos_salida_2 = np.array([
-                                obs_t1[0][0], obs_t1[0][1], obs_t1[0][2],  # Primer marcador
-                                obs_t1[1][0], obs_t1[1][1], obs_t1[1][2],  # Segundo marcador
-                                obs_t1[2][0], obs_t1[2][1], obs_t1[2][2],  # Tercer marcador
-                                objetive_pos[0], objetive_pos[1], objetive_pos[2]  # Objetivo
-                            ])
-            trainnig_data_2.append((datos_entrada_2, datos_salida_2))
             break
             
         datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
         trainnig_data.append((datos_entrada, datos_salida))
-        
-        datos_salida_2 = np.array([
-                            obs_t1[0][0], obs_t1[0][1], obs_t1[0][2],  # Primer marcador
-                            obs_t1[1][0], obs_t1[1][1], obs_t1[1][2],  # Segundo marcador
-                            obs_t1[2][0], obs_t1[2][1], obs_t1[2][2],  # Tercer marcador
-                            objetive_pos[0], objetive_pos[1], objetive_pos[2]  # Objetivo
-                        ])
-        trainnig_data_2.append((datos_entrada_2, datos_salida_2))
     
     sport_client.StopMove()
     time.sleep(2)
@@ -350,13 +341,7 @@ if __name__ == "__main__":
             'outputs': outputs
         }, f)
 
-    #Guardar los datos de entrenamiento en un archivo pickle
-    with open("lista_obs.pkl", "wb") as f:
-        pickle.dump(trainnig_data, f)
-
-    with open("lista_obs_posicion_abs.pkl", "wb") as f:
-        pickle.dump(trainnig_data_2, f)
-    
     #Detener el cliente de streaming
     print("Deteniendo el cliente de streaming...")
     streaming_client.shutdown()
+    print("Desconectado")

@@ -49,9 +49,6 @@ def random_action():
 
     return action
 
-def calculate_best_action():
-    return
-
 def out_of_limits():
     """
     Cuando el robot se sale de los límites establecidos, esta función lo detiene,
@@ -71,42 +68,20 @@ def distancia(p1, p2):
     Calcula la distancia entre el robot y el objetivo, tomando como referencia el punto medio 
     del objetivo y el marker delantero del robot.
     """
-    return np.sqrt((p1[1][0] - p2[0])**2 + (p1[1][2] - p2[2])**2)
+    return np.sqrt((p1[0][0] - p2[0])**2 + (p1[0][2] - p2[2])**2)
 
 def alfa_obj(p1, p2):
     """
     Calcula el ángulo entre el robot y el objetivo, tomando como referencia el punto medio del objetivo 
     y el marker delantero del robot.
     """
-    return np.arctan2(p1[1][2] - p2[2], p1[1][0] - p2[0])
+    return np.arctan2(p1[0][2] - p2[2], p1[0][0] - p2[0])
 
 def alfa_robot(p):
     """
     Calcula el ángulo de orientación del robot, tomando como referencia el marker delantero y trasero del robot.
     """
-    return np.arctan2(p[1][2] - p[2][2], p[1][0] - p[2][0])
-
-def calculate_reward(distancia_antes, distancia_despues, objetivo_alcanzado):
-    """
-    Calcula la recompensa basándose en el cambio de distancia.
-    
-    Returns:
-        float: Recompensa calculada
-    """
-    if objetivo_alcanzado:
-        return 100.0  # Recompensa grande por alcanzar el objetivo
-    
-    # Recompensa proporcional a la reducción de distancia
-    mejora = distancia_antes - distancia_despues
-    
-    if mejora > 0:
-        # Se acercó al objetivo
-        reward = 10.0 * mejora
-    else:
-        # Se alejó del objetivo
-        reward = 5.0 * mejora  # Penalización menor
-    
-    return reward
+    return np.arctan2(p[0][2] - p[1][2], p[0][0] - p[1][0])
 
 def receive_new_frame_with_data(data_dict):
     order_list = ["frameNumber", "markerSetCount", "unlabeledMarkersCount", #type: ignore  # noqa F841
@@ -157,18 +132,6 @@ if __name__ == "__main__":
             print("...")
         finally:
             print("exiting")
-
-    print("Esperando conexión...")
-    time.sleep(2)  #Dar tiempo para conectar
-
-    if streaming_client.connected() is False:
-        print("ERROR: Could not connect properly.  Check that Motive streaming is on.") #type: ignore  # noqa F501
-        try:
-            sys.exit(2)
-        except SystemExit:
-            print("...")
-        finally:
-            print("exiting")
         
     sport_client = SportClient()  
     sport_client.SetTimeout(10.0)
@@ -177,7 +140,7 @@ if __name__ == "__main__":
     actual_pos = []         #Posicion actual del robot
     objetive_pos = []       #Posicion del objetivo
     finalizado = False      #Activar cuando el robot alcance el objetivo
-    utility_data = []       #Lista de datos para el modelo de utilidad
+    trainnig_data = []      #Lista de datos de entrenamiento
 
     print("\nIniciando...\n")
     sport_client.StandUp()
@@ -194,8 +157,8 @@ if __name__ == "__main__":
 
         if i % 25 == 0:
             print("Guardando datos")
-            inputs = np.array([item[0] for item in utility_data])
-            outputs = np.array([item[1] for item in utility_data])
+            inputs = np.array([item[0] for item in trainnig_data])
+            outputs = np.array([item[1] for item in trainnig_data])
 
             #Guardar datos
             with open("training_data_prob.pkl", "wb") as f:
@@ -214,13 +177,6 @@ if __name__ == "__main__":
 
         datos_entrada = np.array([distanciaT, alfa_objT, alfa_robotT, action])
         
-        print(f"\nEstado actual:")
-        print(f"  Distancia al objetivo: {distanciaT:.3f} m")
-        print(f"  Ángulo al objetivo: {alfa_objT:.3f} rad ({np.degrees(alfa_objT):.1f}°)")
-        print(f"  Orientación robot: {alfa_robotT:.3f} rad ({np.degrees(alfa_robotT):.1f}°)")
-        print(f"  Error angular: {alfa_objT - alfa_robotT:.3f} rad ({np.degrees(alfa_objT - alfa_robotT):.1f}°)")
-        print(f"Acción seleccionada: {action}")
-
         """
         45 grad = 0.785 rad
         60 grad = 1.047 rad
@@ -244,7 +200,7 @@ if __name__ == "__main__":
         time.sleep(3)
         
         #Comprobar si el robot se ha salido de los límites establecidos
-        if actual_pos[1][0] >= 2.0 or actual_pos[1][0] <= -1.1 or actual_pos[1][2] >= 1.25 or actual_pos[1][2] <= -1.4:
+        if actual_pos[0][0] >= 2.0 or actual_pos[0][0] <= -1.1 or actual_pos[0][2] >= 1.25 or actual_pos[0][2] <= -1.4:
             out_of_limits()
             actual_pos = streaming_client.get_last_pos()
             continue
@@ -259,8 +215,11 @@ if __name__ == "__main__":
         alfa_robotT1 = alfa_robot(obs_t1)
 
         print("\n")
+        print(f"Observaciones en T:\n x={obs_t[0][0]}, y={obs_t[0][1]}, z={obs_t[0][2]}\nx={obs_t[1][0]}, y={obs_t[1][1]}, z={obs_t[1][2]}\nx={obs_t[2][0]}, y={obs_t[2][1]}, z={obs_t[2][2]}")
+        print(f"Observaciones en T: distancia={distanciaT}, alfa_obj={alfa_objT}, alfa_robot={alfa_robotT}")
+        print(f"Acción tomada: {action}")
         print(f"Posición actual:\n x={actual_pos[0][0]}, y={actual_pos[0][1]}, z={actual_pos[0][2]}\nx={actual_pos[1][0]}, y={actual_pos[1][1]}, z={actual_pos[1][2]}\nx={actual_pos[2][0]}, y={actual_pos[2][1]}, z={actual_pos[2][2]}")
-        print(f"Observaciones en T+1: distancia={distanciaT1}, alfa_obj={alfa_objT1}, alfa_robot={alfa_robotT1}")
+        print(f"Observaciones en T: distancia={distanciaT1}, alfa_obj={alfa_objT1}, alfa_robot={alfa_robotT1}")
         print("\n")
 
         print("Distancia al objetivo:")
@@ -274,22 +233,22 @@ if __name__ == "__main__":
             time.sleep(2)
             
             datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
-            utility_data.append((datos_entrada, datos_salida))
+            trainnig_data.append((datos_entrada, datos_salida))
             break
             
         datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
-        utility_data.append((datos_entrada, datos_salida))
+        trainnig_data.append((datos_entrada, datos_salida))
 
     sport_client.StopMove()
     time.sleep(2)
     sport_client.StandDown()
     time.sleep(3)
 
-    print(f"Total de transiciones recolectadas: {len(utility_data)}")
-    print(f"Transiciones recolectadas: {utility_data}")
+    print(f"Total de transiciones recolectadas: {len(trainnig_data)}")
+    print(f"Transiciones recolectadas: {trainnig_data}")
 
-    inputs = np.array([item[0] for item in utility_data])
-    outputs = np.array([item[1] for item in utility_data])
+    inputs = np.array([item[0] for item in trainnig_data])
+    outputs = np.array([item[1] for item in trainnig_data])
 
     # Guardar
     with open("training_data.pkl", "wb") as f:

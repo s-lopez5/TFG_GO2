@@ -71,20 +71,20 @@ def distancia(p1, p2):
     Calcula la distancia entre el robot y el objetivo, tomando como referencia el punto medio 
     del objetivo y el marker delantero del robot.
     """
-    return np.sqrt((p1[0][0] - p2[0])**2 + (p1[0][2] - p2[2])**2)
+    return np.sqrt((p1[1][0] - p2[0])**2 + (p1[1][2] - p2[2])**2)
 
 def alfa_obj(p1, p2):
     """
     Calcula el ángulo entre el robot y el objetivo, tomando como referencia el punto medio del objetivo 
     y el marker delantero del robot.
     """
-    return np.arctan2(p1[0][2] - p2[2], p1[0][0] - p2[0])
+    return np.arctan2(p1[1][2] - p2[2], p1[1][0] - p2[0])
 
 def alfa_robot(p):
     """
     Calcula el ángulo de orientación del robot, tomando como referencia el marker delantero y trasero del robot.
     """
-    return np.arctan2(p[0][2] - p[1][2], p[0][0] - p[1][0])
+    return np.arctan2(p[1][2] - p[2][2], p[1][0] - p[2][0])
 
 def receive_new_frame_with_data(data_dict):
     order_list = ["frameNumber", "markerSetCount", "unlabeledMarkersCount", #type: ignore  # noqa F841
@@ -210,7 +210,7 @@ if __name__ == "__main__":
         time.sleep(3)
         
         #Comprobar si el robot se ha salido de los límites establecidos
-        if actual_pos[0][0] >= 2.0 or actual_pos[0][0] <= -1.1 or actual_pos[0][2] >= 1.25 or actual_pos[0][2] <= -1.4:
+        if actual_pos[1][0] >= 2.0 or actual_pos[1][0] <= -1.1 or actual_pos[1][2] >= 1.25 or actual_pos[1][2] <= -1.4:
             out_of_limits()
             actual_pos = streaming_client.get_last_pos()
             continue
@@ -233,9 +233,8 @@ if __name__ == "__main__":
         print("\n")
 
         print("Distancia al objetivo:")
-        print(actual_pos[0][0] - objetive_pos[0])
-        print(actual_pos[0][2] - objetive_pos[2])
-
+        print(distanciaT1)
+        
         #Comprobar si el robot ha alcanzado el objetivo
         if distanciaT1 <= 0.3:
             print("Objetivo alcanzado.\n")

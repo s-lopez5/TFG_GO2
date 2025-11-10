@@ -190,7 +190,7 @@ if __name__ == "__main__":
 
     optionsDict = {}
     optionsDict["clientAddress"] = "192.168.123.149"
-    optionsDict["serverAddress"] = "192.168.123.112"
+    optionsDict["serverAddress"] = "192.168.123.164"
     optionsDict["use_multicast"] = None
     optionsDict["stream_type"] = None
     stream_type_arg = None
@@ -203,8 +203,8 @@ if __name__ == "__main__":
 
     # Streaming client configuration.
     # Calls RB handler on emulator for data transmission.
-    streaming_client.new_frame_listener = receive_new_frame
-    #streaming_client.new_frame_with_data_listener = receive_new_frame_with_data  # type ignore # noqa E501
+    #streaming_client.new_frame_listener = receive_new_frame
+    streaming_client.new_frame_with_data_listener = receive_new_frame_with_data  # type ignore # noqa E501
     streaming_client.rigid_body_listener = receive_rigid_body_frame
 
     # print instructions

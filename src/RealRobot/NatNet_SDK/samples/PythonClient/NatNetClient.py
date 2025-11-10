@@ -2091,7 +2091,7 @@ class NatNetClient:
 
             offset_tmp, mocap_data = self.__unpack_mocap_data(data[offset:], packet_size, major, minor) #type: ignore  # noqa E501
             offset += offset_tmp
-            """
+            
             # Print MarkerSet Data
             if mocap_data.marker_set_data:
                 print(f"\n--- MARKER SET DATA ---")
@@ -2101,7 +2101,7 @@ class NatNetClient:
                     print(f"    Markers: {len(marker_data.marker_pos_list)}")
                     for j, pos in enumerate(marker_data.marker_pos_list):
                         print(f"      Marker {j}: X={pos[0]:.4f}, Y={pos[1]:.4f}, Z={pos[2]:.4f}")
-            """
+            
             if print_level >= 1:
                 self.last_pos = []
 
@@ -2123,8 +2123,8 @@ class NatNetClient:
                             self.last_pos = marker_data.marker_pos_list
                 print(self.obj_pos)                
             
-            #print("\nLast Position: ", self.last_pos)
-            #print("\nObjetive Position: ", self.obj_pos)
+            print("\nLast Position: ", self.last_pos)
+            print("\nObjetive Position: ", self.obj_pos)
             
             # get a string version of the data for output
             """
