@@ -86,28 +86,6 @@ def alfa_robot(p):
     """
     return np.arctan2(p[1][2] - p[2][2], p[1][0] - p[2][0])
 
-def calculate_reward(distancia_antes, distancia_despues, objetivo_alcanzado):
-    """
-    Calcula la recompensa basándose en el cambio de distancia.
-    
-    Returns:
-        float: Recompensa calculada
-    """
-    if objetivo_alcanzado:
-        return 100.0  # Recompensa grande por alcanzar el objetivo
-    
-    # Recompensa proporcional a la reducción de distancia
-    mejora = distancia_antes - distancia_despues
-    
-    if mejora > 0:
-        # Se acercó al objetivo
-        reward = 10.0 * mejora
-    else:
-        # Se alejó del objetivo
-        reward = 5.0 * mejora  # Penalización menor
-    
-    return reward
-
 def receive_new_frame_with_data(data_dict):
     order_list = ["frameNumber", "markerSetCount", "unlabeledMarkersCount", #type: ignore  # noqa F841
                   "rigidBodyCount", "skeletonCount", "labeledMarkerCount",
@@ -192,33 +170,8 @@ if __name__ == "__main__":
         
         print(f"--- Iteración {i} ---")
 
-        if i % 25 == 0:
-            print("Guardando datos")
-            inputs = np.array([item[0] for item in utility_data])
-            outputs = np.array([item[1] for item in utility_data])
-
-            #Guardar datos
-            with open("training_data_prob.pkl", "wb") as f:
-                pickle.dump({
-                    'inputs': inputs,
-                    'outputs': outputs
-                }, f)
-
-        obs_t = actual_pos  #Obtenemos las observaciones en T
-        distanciaT = distancia(obs_t, objetive_pos)
-        alfa_objT = alfa_obj(obs_t, objetive_pos)
-        alfa_robotT = alfa_robot(obs_t)
-
-
         action = random_action()  #Obtenemos una acción aleatoria
-
-        datos_entrada = np.array([distanciaT, alfa_objT, alfa_robotT, action])
         
-        print(f"\nEstado actual:")
-        print(f"  Distancia al objetivo: {distanciaT:.3f} m")
-        print(f"  Ángulo al objetivo: {alfa_objT:.3f} rad ({np.degrees(alfa_objT):.1f}°)")
-        print(f"  Orientación robot: {alfa_robotT:.3f} rad ({np.degrees(alfa_robotT):.1f}°)")
-        print(f"  Error angular: {alfa_objT - alfa_robotT:.3f} rad ({np.degrees(alfa_objT - alfa_robotT):.1f}°)")
         print(f"Acción seleccionada: {action}")
 
         """
@@ -259,27 +212,41 @@ if __name__ == "__main__":
         alfa_robotT1 = alfa_robot(obs_t1)
 
         print("\n")
-        print(f"Posición actual:\n x={actual_pos[0][0]}, y={actual_pos[0][1]}, z={actual_pos[0][2]}\nx={actual_pos[1][0]}, y={actual_pos[1][1]}, z={actual_pos[1][2]}\nx={actual_pos[2][0]}, y={actual_pos[2][1]}, z={actual_pos[2][2]}")
+        print(f"Posición actual(T+1):\n x={actual_pos[0][0]}, y={actual_pos[0][1]}, z={actual_pos[0][2]}\nx={actual_pos[1][0]}, y={actual_pos[1][1]}, z={actual_pos[1][2]}\nx={actual_pos[2][0]}, y={actual_pos[2][1]}, z={actual_pos[2][2]}")
         print(f"Observaciones en T+1: distancia={distanciaT1}, alfa_obj={alfa_objT1}, alfa_robot={alfa_robotT1}")
         print("\n")
 
         print("Distancia al objetivo:")
         print(distanciaT1)
 
+        datos_t1 = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
+        utility_data.append(datos_t1)
+            
+        
         #Comprobar si el robot ha alcanzado el objetivo
         if distanciaT1 <= 0.3:
             print("Objetivo alcanzado.\n")
+            
             finalizado = True
+            
             sport_client.StopMove()
             time.sleep(2)
-            
-            datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
-            utility_data.append((datos_entrada, datos_salida))
+
+            #Obtener los últimos 10 datos y asignar valores de 0.0 a 1.0
+            ultimos = utility_data[-10:] if len(utility_data) >= 10 else utility_data
+            datos_valorados = []
+
+            for i, dato in enumerate(ultimos):
+                #Calcular valor ascendente de 0.0 a 1.0
+                valor = i / (len(ultimos) - 1) if len(ultimos) > 1 else 1.0
+                datos_valorados.append((dato, valor))
+
+            print(f"\nÚltimos {len(ultimos)} datos con valores asignados:")
+            for idx, (dato, valor) in enumerate(datos_valorados):
+                print(f"Dato {idx+1}: {dato} - Valor: {valor:.2f}")
+
             break
             
-        datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
-        utility_data.append((datos_entrada, datos_salida))
-
     sport_client.StopMove()
     time.sleep(2)
     sport_client.StandDown()
@@ -288,14 +255,10 @@ if __name__ == "__main__":
     print(f"Total de transiciones recolectadas: {len(utility_data)}")
     print(f"Transiciones recolectadas: {utility_data}")
 
-    inputs = np.array([item[0] for item in utility_data])
-    outputs = np.array([item[1] for item in utility_data])
-
-    # Guardar
-    with open("training_data.pkl", "wb") as f:
+    #Guardar los últimos 10 datos con sus valores
+    with open("utility_data_1.pkl", "wb") as f:
         pickle.dump({
-            'inputs': inputs,
-            'outputs': outputs
+            'datos_objetivo': datos_valorados
         }, f)
 
     #Detener el cliente de streaming
