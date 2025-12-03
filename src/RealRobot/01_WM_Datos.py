@@ -26,6 +26,9 @@ from NatNet_SDK.samples.PythonClient.NatNetClient import NatNetClient
 from NatNet_SDK.samples.PythonClient.DataDescriptions import DataDescriptions
 from NatNet_SDK.samples.PythonClient.MoCapData import MoCapData
 
+action_history = []  #Historial de acciones tomadas
+
+
 def random_action():
     """
     Devuelve un número aleatorio entre 0 y 5 (ambos inclusive).
@@ -68,20 +71,20 @@ def distancia(p1, p2):
     Calcula la distancia entre el robot y el objetivo, tomando como referencia el punto medio 
     del objetivo y el marker delantero del robot.
     """
-    return np.sqrt((p1[0][0] - p2[0])**2 + (p1[0][2] - p2[2])**2)
+    return np.sqrt((p1[1][0] - p2[0])**2 + (p1[1][2] - p2[2])**2)
 
 def alfa_obj(p1, p2):
     """
     Calcula el ángulo entre el robot y el objetivo, tomando como referencia el punto medio del objetivo 
     y el marker delantero del robot.
     """
-    return np.arctan2(p1[0][2] - p2[2], p1[0][0] - p2[0])
+    return np.arctan2(p1[1][2] - p2[2], p1[1][0] - p2[0])
 
 def alfa_robot(p):
     """
     Calcula el ángulo de orientación del robot, tomando como referencia el marker delantero y trasero del robot.
     """
-    return np.arctan2(p[0][2] - p[1][2], p[0][0] - p[1][0])
+    return np.arctan2(p[1][2] - p[2][2], p[1][0] - p[2][0])
 
 def receive_new_frame_with_data(data_dict):
     order_list = ["frameNumber", "markerSetCount", "unlabeledMarkersCount", #type: ignore  # noqa F841
@@ -97,8 +100,7 @@ def receive_new_frame_with_data(data_dict):
                 out_string += str(data_dict[key]) + " "
             out_string += "/"
         #print(out_string)
-
-
+ 
 if __name__ == "__main__":
     
     ChannelFactoryInitialize(0, "eno1")
@@ -106,7 +108,7 @@ if __name__ == "__main__":
     #Crear un diccionario con las opciones de conexión
     optionsDict = {}
     optionsDict["clientAddress"] = "192.168.123.149"
-    optionsDict["serverAddress"] = "192.168.123.164"
+    optionsDict["serverAddress"] = "192.168.123.112"
     optionsDict["use_multicast"] = False
     optionsDict["stream_type"] = 'd'
     stream_type_arg = None
@@ -141,6 +143,7 @@ if __name__ == "__main__":
     objetive_pos = []       #Posicion del objetivo
     finalizado = False      #Activar cuando el robot alcance el objetivo
     trainnig_data = []      #Lista de datos de entrenamiento
+    trainnig_data_2 = []    #Lista de datos de entrenamiento con posiciones absolutas
 
     print("\nIniciando...\n")
     sport_client.StandUp()
@@ -176,7 +179,7 @@ if __name__ == "__main__":
         action = random_action()  #Obtenemos una acción aleatoria
 
         datos_entrada = np.array([distanciaT, alfa_objT, alfa_robotT, action])
-        
+
         """
         45 grad = 0.785 rad
         60 grad = 1.047 rad
@@ -200,7 +203,7 @@ if __name__ == "__main__":
         time.sleep(3)
         
         #Comprobar si el robot se ha salido de los límites establecidos
-        if actual_pos[0][0] >= 2.0 or actual_pos[0][0] <= -1.1 or actual_pos[0][2] >= 1.25 or actual_pos[0][2] <= -1.4:
+        if actual_pos[1][0] >= 2.0 or actual_pos[1][0] <= -1.1 or actual_pos[1][2] >= 1.25 or actual_pos[1][2] <= -1.4:
             out_of_limits()
             actual_pos = streaming_client.get_last_pos()
             continue
@@ -224,7 +227,7 @@ if __name__ == "__main__":
 
         print("Distancia al objetivo:")
         print(distanciaT1)
-
+        
         #Comprobar si el robot ha alcanzado el objetivo
         if distanciaT1 <= 0.3:
             print("Objetivo alcanzado.\n")
@@ -234,11 +237,13 @@ if __name__ == "__main__":
             
             datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
             trainnig_data.append((datos_entrada, datos_salida))
+
             break
             
-        datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
-        trainnig_data.append((datos_entrada, datos_salida))
 
+        datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
+        trainnig_data.append((datos_entrada, datos_salida))   
+        
     sport_client.StopMove()
     time.sleep(2)
     sport_client.StandDown()
@@ -256,7 +261,7 @@ if __name__ == "__main__":
             'inputs': inputs,
             'outputs': outputs
         }, f)
-
+    
     #Detener el cliente de streaming
     print("Deteniendo el cliente de streaming...")
     streaming_client.shutdown()

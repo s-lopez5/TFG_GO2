@@ -26,11 +26,12 @@ from NatNet_SDK.samples.PythonClient.NatNetClient import NatNetClient
 from NatNet_SDK.samples.PythonClient.DataDescriptions import DataDescriptions
 from NatNet_SDK.samples.PythonClient.MoCapData import MoCapData
 
+"""
 def random_action():
-    """
-    Devuelve un número aleatorio entre 0 y 5 (ambos inclusive).
-    No devuelve el mismo número tres veces consecutivas.
-    """
+    
+    #Devuelve un número aleatorio entre 0 y 5 (ambos inclusive).
+    #No devuelve el mismo número tres veces consecutivas.
+    
     global action_history
 
     if len(action_history) >= 2 and action_history[-1] == action_history[-2]:
@@ -48,9 +49,51 @@ def random_action():
         action_history.pop(0) 
 
     return action
+    """
 
-def calculate_best_action():
-    return
+def calculate_best_action(world_model, utility_model, obs_t):
+    """
+    Calcula la mejor acción a ejecutar basándose en el modelo de mundo y el modelo de utilidad.
+    
+    Parámetros:
+    - world_model: Modelo entrenado que predice las percepciones en T+1 dado el estado actual y una acción
+    - utility_model: Modelo entrenado que predice el valor de utilidad de un estado
+    - current_obs: Observaciones actuales [distancia, alfa_obj, alfa_robot]
+    
+    Retorna:
+    - best_action: La acción con el mayor valor de utilidad predicho (0-5)
+    """
+    
+    #Número de acciones posibles (0-5)
+    num_actions = 6
+    
+    #Arrays para almacenar predicciones
+    predicted_utilities = []
+    
+    #Para cada acción posible
+    for action in range(num_actions):
+        # Preparar la entrada para el modelo de mundo: [obs_actuales + acción]
+        # current_obs tiene 3 valores: [distancia, alfa_obj, alfa_robot]
+        world_model_input = np.concatenate([obs_t, [action]]).reshape(1, -1)
+        
+        # Predecir las observaciones en T+1 usando el modelo de mundo
+        predicted_obs_t1 = world_model.predict(world_model_input, verbose=0)
+        
+        # Usar el modelo de utilidad para predecir el valor de utilidad de las observaciones predichas
+        predicted_utility = utility_model.predict(predicted_obs_t1, verbose=0)[0][0]
+        
+        predicted_utilities.append(predicted_utility)
+        
+        print(f"  Acción {action}: Utilidad predicha = {predicted_utility:.4f}")
+    
+    #Encontrar la acción con el mayor valor de utilidad
+    best_action = np.argmax(predicted_utilities)
+    best_utility = predicted_utilities[best_action]
+    
+    print(f"\n  Mejor acción seleccionada: {best_action} (Utilidad: {best_utility:.4f})")
+    
+    return best_action
+
 
 def out_of_limits():
     """
@@ -152,6 +195,13 @@ if __name__ == "__main__":
     sport_client.SetTimeout(10.0)
     sport_client.Init()
 
+    #Cargar modelos entrenados
+    print("Cargando modelos de mundo y utilidad...")
+    from tensorflow import keras
+    world_model = keras.models.load_model('world_model.h5')
+    utility_model = keras.models.load_model('utility_model.h5')
+    print("Modelos cargados correctamente.\n")
+
     actual_pos = []         #Posicion actual del robot
     objetive_pos = []       #Posicion del objetivo
     finalizado = False      #Activar cuando el robot alcance el objetivo
@@ -170,7 +220,17 @@ if __name__ == "__main__":
         
         print(f"--- Iteración {i} ---")
 
-        action = random_action()  #Obtenemos una acción aleatoria
+        #Calcular observaciones actuales
+        distanciaT = distancia(actual_pos, objetive_pos)
+        alfa_objT = alfa_obj(actual_pos, objetive_pos)
+        alfa_robotT = alfa_robot(actual_pos)
+
+        obs_t = np.array([distanciaT, alfa_objT, alfa_robotT])
+
+        print(f"Observaciones actuales (T): distancia={distanciaT:.4f}, alfa_obj={alfa_objT:.4f}, alfa_robot={alfa_robotT:.4f}")
+        
+        # Obtener la mejor acción usando los modelos
+        action = calculate_best_action(world_model, utility_model, obs_t)
         
         print(f"Acción seleccionada: {action}")
 
@@ -221,7 +281,6 @@ if __name__ == "__main__":
 
         datos_t1 = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
         utility_data.append(datos_t1)
-            
         
         #Comprobar si el robot ha alcanzado el objetivo
         if distanciaT1 <= 0.3:

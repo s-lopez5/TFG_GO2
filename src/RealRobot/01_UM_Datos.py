@@ -26,9 +26,6 @@ from NatNet_SDK.samples.PythonClient.NatNetClient import NatNetClient
 from NatNet_SDK.samples.PythonClient.DataDescriptions import DataDescriptions
 from NatNet_SDK.samples.PythonClient.MoCapData import MoCapData
 
-action_history = []  #Historial de acciones tomadas
-
-
 def random_action():
     """
     Devuelve un número aleatorio entre 0 y 5 (ambos inclusive).
@@ -51,6 +48,9 @@ def random_action():
         action_history.pop(0) 
 
     return action
+
+def calculate_best_action():
+    return
 
 def out_of_limits():
     """
@@ -100,7 +100,8 @@ def receive_new_frame_with_data(data_dict):
                 out_string += str(data_dict[key]) + " "
             out_string += "/"
         #print(out_string)
- 
+
+
 if __name__ == "__main__":
     
     ChannelFactoryInitialize(0, "eno1")
@@ -108,7 +109,7 @@ if __name__ == "__main__":
     #Crear un diccionario con las opciones de conexión
     optionsDict = {}
     optionsDict["clientAddress"] = "192.168.123.149"
-    optionsDict["serverAddress"] = "192.168.123.112"
+    optionsDict["serverAddress"] = "192.168.123.164"
     optionsDict["use_multicast"] = False
     optionsDict["stream_type"] = 'd'
     stream_type_arg = None
@@ -134,6 +135,18 @@ if __name__ == "__main__":
             print("...")
         finally:
             print("exiting")
+
+    print("Esperando conexión...")
+    time.sleep(2)  #Dar tiempo para conectar
+
+    if streaming_client.connected() is False:
+        print("ERROR: Could not connect properly.  Check that Motive streaming is on.") #type: ignore  # noqa F501
+        try:
+            sys.exit(2)
+        except SystemExit:
+            print("...")
+        finally:
+            print("exiting")
         
     sport_client = SportClient()  
     sport_client.SetTimeout(10.0)
@@ -142,8 +155,7 @@ if __name__ == "__main__":
     actual_pos = []         #Posicion actual del robot
     objetive_pos = []       #Posicion del objetivo
     finalizado = False      #Activar cuando el robot alcance el objetivo
-    trainnig_data = []      #Lista de datos de entrenamiento
-    trainnig_data_2 = []    #Lista de datos de entrenamiento con posiciones absolutas
+    utility_data = []       #Lista de datos para el modelo de utilidad
 
     print("\nIniciando...\n")
     sport_client.StandUp()
@@ -158,34 +170,9 @@ if __name__ == "__main__":
         
         print(f"--- Iteración {i} ---")
 
-        if i % 25 == 0:
-            print("Guardando datos")
-            inputs = np.array([item[0] for item in trainnig_data])
-            outputs = np.array([item[1] for item in trainnig_data])
-
-            #Guardar datos
-            with open("training_data_prob.pkl", "wb") as f:
-                pickle.dump({
-                    'inputs': inputs,
-                    'outputs': outputs
-                }, f)
-
-        obs_t = actual_pos  #Obtenemos las observaciones en T
-        distanciaT = distancia(obs_t, objetive_pos)
-        alfa_objT = alfa_obj(obs_t, objetive_pos)
-        alfa_robotT = alfa_robot(obs_t)
-
-
         action = random_action()  #Obtenemos una acción aleatoria
-
-        datos_entrada = np.array([distanciaT, alfa_objT, alfa_robotT, action])
-        datos_entrada_2 = np.array([
-                            obs_t[0][0], obs_t[0][1], obs_t[0][2],  # Primer marcador
-                            obs_t[1][0], obs_t[1][1], obs_t[1][2],  # Segundo marcador
-                            obs_t[2][0], obs_t[2][1], obs_t[2][2],  # Tercer marcador
-                            objetive_pos[0], objetive_pos[1], objetive_pos[2],  # Objetivo
-                            action
-                        ])
+        
+        print(f"Acción seleccionada: {action}")
 
         """
         45 grad = 0.785 rad
@@ -225,70 +212,54 @@ if __name__ == "__main__":
         alfa_robotT1 = alfa_robot(obs_t1)
 
         print("\n")
-        print(f"Observaciones en T:\n x={obs_t[0][0]}, y={obs_t[0][1]}, z={obs_t[0][2]}\nx={obs_t[1][0]}, y={obs_t[1][1]}, z={obs_t[1][2]}\nx={obs_t[2][0]}, y={obs_t[2][1]}, z={obs_t[2][2]}")
-        print(f"Observaciones en T: distancia={distanciaT}, alfa_obj={alfa_objT}, alfa_robot={alfa_robotT}")
-        print(f"Acción tomada: {action}")
-        print(f"Posición actual:\n x={actual_pos[0][0]}, y={actual_pos[0][1]}, z={actual_pos[0][2]}\nx={actual_pos[1][0]}, y={actual_pos[1][1]}, z={actual_pos[1][2]}\nx={actual_pos[2][0]}, y={actual_pos[2][1]}, z={actual_pos[2][2]}")
-        print(f"Observaciones en T: distancia={distanciaT1}, alfa_obj={alfa_objT1}, alfa_robot={alfa_robotT1}")
+        print(f"Posición actual(T+1):\n x={actual_pos[0][0]}, y={actual_pos[0][1]}, z={actual_pos[0][2]}\nx={actual_pos[1][0]}, y={actual_pos[1][1]}, z={actual_pos[1][2]}\nx={actual_pos[2][0]}, y={actual_pos[2][1]}, z={actual_pos[2][2]}")
+        print(f"Observaciones en T+1: distancia={distanciaT1}, alfa_obj={alfa_objT1}, alfa_robot={alfa_robotT1}")
         print("\n")
 
         print("Distancia al objetivo:")
         print(distanciaT1)
+
+        datos_t1 = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
+        utility_data.append(datos_t1)
         
         #Comprobar si el robot ha alcanzado el objetivo
         if distanciaT1 <= 0.3:
             print("Objetivo alcanzado.\n")
+            
             finalizado = True
+            
             sport_client.StopMove()
             time.sleep(2)
-            
-            datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
-            trainnig_data.append((datos_entrada, datos_salida))
-            
-            datos_salida_2 = np.array([
-                                obs_t1[0][0], obs_t1[0][1], obs_t1[0][2],  # Primer marcador
-                                obs_t1[1][0], obs_t1[1][1], obs_t1[1][2],  # Segundo marcador
-                                obs_t1[2][0], obs_t1[2][1], obs_t1[2][2],  # Tercer marcador
-                                objetive_pos[0], objetive_pos[1], objetive_pos[2]  # Objetivo
-                            ])
-            trainnig_data_2.append((datos_entrada_2, datos_salida_2))
+
+            #Obtener los últimos 10 datos y asignar valores de 0.0 a 1.0
+            ultimos = utility_data[-10:] if len(utility_data) >= 10 else utility_data
+            datos_valorados = []
+
+            for i, dato in enumerate(ultimos):
+                #Calcular valor ascendente de 0.0 a 1.0
+                valor = i / (len(ultimos) - 1) if len(ultimos) > 1 else 1.0
+                datos_valorados.append((dato, valor))
+
+            print(f"\nÚltimos {len(ultimos)} datos con valores asignados:")
+            for idx, (dato, valor) in enumerate(datos_valorados):
+                print(f"Dato {idx+1}: {dato} - Valor: {valor:.2f}")
+
             break
             
-
-        datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
-        trainnig_data.append((datos_entrada, datos_salida))
-        
-        datos_salida_2 = np.array([
-                            obs_t1[0][0], obs_t1[0][1], obs_t1[0][2],  # Primer marcador
-                            obs_t1[1][0], obs_t1[1][1], obs_t1[1][2],  # Segundo marcador
-                            obs_t1[2][0], obs_t1[2][1], obs_t1[2][2],  # Tercer marcador
-                            objetive_pos[0], objetive_pos[1], objetive_pos[2]  # Objetivo
-                        ])
-        trainnig_data_2.append((datos_entrada_2, datos_salida_2))
-
-        
-        
     sport_client.StopMove()
     time.sleep(2)
     sport_client.StandDown()
     time.sleep(3)
 
-    print(f"Total de transiciones recolectadas: {len(trainnig_data)}")
-    print(f"Transiciones recolectadas: {trainnig_data}")
+    print(f"Total de transiciones recolectadas: {len(utility_data)}")
+    print(f"Transiciones recolectadas: {utility_data}")
 
-    inputs = np.array([item[0] for item in trainnig_data])
-    outputs = np.array([item[1] for item in trainnig_data])
-
-    # Guardar
-    with open("training_data.pkl", "wb") as f:
+    #Guardar los últimos 10 datos con sus valores
+    with open("utility_data_1.pkl", "wb") as f:
         pickle.dump({
-            'inputs': inputs,
-            'outputs': outputs
+            'datos_objetivo': datos_valorados
         }, f)
-    
-    with open("lista_obs_posicion_abs.pkl", "wb") as f:
-        pickle.dump(trainnig_data_2, f)
-    
+
     #Detener el cliente de streaming
     print("Deteniendo el cliente de streaming...")
     streaming_client.shutdown()
