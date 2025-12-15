@@ -2093,6 +2093,7 @@ class NatNetClient:
             offset += offset_tmp
             
             # Print MarkerSet Data
+            """
             if mocap_data.marker_set_data:
                 print(f"\n--- MARKER SET DATA ---")
                 print(f"Marker Set Count: {mocap_data.marker_set_data.get_marker_set_count()}")
@@ -2101,7 +2102,7 @@ class NatNetClient:
                     print(f"    Markers: {len(marker_data.marker_pos_list)}")
                     for j, pos in enumerate(marker_data.marker_pos_list):
                         print(f"      Marker {j}: X={pos[0]:.4f}, Y={pos[1]:.4f}, Z={pos[2]:.4f}")
-            
+            """
             if print_level >= 1:
                 self.last_pos = []
 
@@ -2120,11 +2121,10 @@ class NatNetClient:
 
 
                         elif marker_data.model_name.decode('utf-8') == "Go2":
-                            self.last_pos = marker_data.marker_pos_list
-                print(self.obj_pos)                
+                            self.last_pos = marker_data.marker_pos_list               
             
-            print("\nLast Position: ", self.last_pos)
-            print("\nObjetive Position: ", self.obj_pos)
+            #print("\nLast Position: ", self.last_pos)
+            #print("\nObjetive Position: ", self.obj_pos)
             
             # get a string version of the data for output
             """

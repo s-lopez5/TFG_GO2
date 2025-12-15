@@ -81,7 +81,7 @@ print("\nResumen del modelo:")
 model.summary()
 
 #Callbacks
-#Early stopping para 50 epochs sin mejora
+#Early stopping para 100 epochs sin mejora
 early_stopping = keras.callbacks.EarlyStopping(
     monitor='val_loss',
     patience=100,

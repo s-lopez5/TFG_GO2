@@ -26,6 +26,8 @@ from NatNet_SDK.samples.PythonClient.NatNetClient import NatNetClient
 from NatNet_SDK.samples.PythonClient.DataDescriptions import DataDescriptions
 from NatNet_SDK.samples.PythonClient.MoCapData import MoCapData
 
+action_history = []  #Historial de acciones tomadas
+
 def random_action():
     """
     Devuelve un número aleatorio entre 0 y 5 (ambos inclusive).
@@ -235,10 +237,13 @@ if __name__ == "__main__":
             ultimos = utility_data[-10:] if len(utility_data) >= 10 else utility_data
             datos_valorados = []
 
-            for i, dato in enumerate(ultimos):
-                #Calcular valor ascendente de 0.0 a 1.0
-                valor = i / (len(ultimos) - 1) if len(ultimos) > 1 else 1.0
-                datos_valorados.append((dato, valor))
+            for i, elemento in enumerate(reversed(ultimos)):
+                # Asignar valores de 1.0, 0.9, 0.8, ..., 0.0
+                valor = 1.0 - (i * 0.1)
+                datos_valorados.append((elemento, valor))
+    
+            # Invertir la lista para mantener el orden original
+            datos_valorados.reverse()
 
             print(f"\nÚltimos {len(ultimos)} datos con valores asignados:")
             for idx, (dato, valor) in enumerate(datos_valorados):
@@ -255,7 +260,7 @@ if __name__ == "__main__":
     print(f"Transiciones recolectadas: {utility_data}")
 
     #Guardar los últimos 10 datos con sus valores
-    with open("utility_data_1.pkl", "wb") as f:
+    with open("utility_data_3.pkl", "wb") as f:
         pickle.dump({
             'datos_objetivo': datos_valorados
         }, f)

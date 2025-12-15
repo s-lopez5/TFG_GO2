@@ -1,7 +1,7 @@
 import pickle
 import numpy as np
 
-with open("training_data_shuffled.pkl", "rb") as f:
+with open("utility_data_1.pkl", "rb") as f:
     data = pickle.load(f)
 
 input_data = data['inputs']  #Ya es np.array, listo para usar
