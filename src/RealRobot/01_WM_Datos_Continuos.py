@@ -1,0 +1,266 @@
+import time
+import sys
+import os
+import numpy as np
+import random
+import pickle
+from dataclasses import dataclass
+
+#Añadir el path del SDK de Unitree
+from sdkpy.core.channel import ChannelSubscriber, ChannelFactoryInitialize
+from sdkpy.idl.default import unitree_go_msg_dds__SportModeState_
+from sdkpy.idl.unitree_go.msg.dds_ import SportModeState_
+from sdkpy.go2.sport.sport_client import (
+    SportClient,
+    PathPoint,
+    SPORT_PATH_POINT_SIZE,
+)
+
+#Añadir el path del SDK de Natnet
+sdk_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "NatNet_SDK", "samples", "PythonClient"))
+if sdk_path not in sys.path:
+    sys.path.append(sdk_path)
+
+from NatNet_SDK.samples.PythonClient.NatNetClient import NatNetClient
+from NatNet_SDK.samples.PythonClient.NatNetClient import NatNetClient
+from NatNet_SDK.samples.PythonClient.DataDescriptions import DataDescriptions
+from NatNet_SDK.samples.PythonClient.MoCapData import MoCapData
+
+action_history = []  #Historial de acciones tomadas
+
+def random_action():
+    """
+    Devuelve la accion aleatoria continua en forma de array [x, y, z].
+    x: velocidad en m/s (0.3 a 0.5)
+    y: velocidad lateral en m/s (siempre 0)
+    z: velocidad angular en rad/s (-1.047 a 1.047)
+    """
+
+    val_x = 0.0
+    val_z = 0.0
+
+    #0 = avanzar
+    #1 = girar derecha
+    #2 = girar izquierda
+
+    action = random.randint(0, 2)
+
+    if action == 0:
+        val_x = random.choice([0.3, 0.4, 0.5])
+    elif action == 1:
+        val_z = random.choice([0.524, 0.785, 1.047])
+    elif action == 2:
+        val_z = random.choice([-1.047, -0.785, -0.524])
+
+    return [val_x, 0.0, val_z]
+
+def out_of_limits():
+    """
+    Cuando el robot se sale de los límites establecidos, esta función lo detiene,
+    lo hace retroceder, girar sobre si mismo 180 grados.
+    """
+    sport_client.StopMove()
+    time.sleep(2)
+    sport_client.Move(0,0,3.14159)
+    time.sleep(3)
+    sport_client.Move(0.7,0,0)
+    time.sleep(3)
+
+    return
+
+def distancia(p1, p2):
+    """
+    Calcula la distancia entre el robot y el objetivo, tomando como referencia el punto medio 
+    del objetivo y el marker delantero del robot.
+    """
+    return np.sqrt((p1[1][0] - p2[0])**2 + (p1[1][2] - p2[2])**2)
+
+def alfa_obj(p1, p2):
+    """
+    Calcula el ángulo entre el robot y el objetivo, tomando como referencia el punto medio del objetivo 
+    y el marker delantero del robot.
+    """
+    return np.arctan2(p1[1][2] - p2[2], p1[1][0] - p2[0])
+
+def alfa_robot(p):
+    """
+    Calcula el ángulo de orientación del robot, tomando como referencia el marker delantero y trasero del robot.
+    """
+    return np.arctan2(p[1][2] - p[2][2], p[1][0] - p[2][0])
+
+def receive_new_frame_with_data(data_dict):
+    order_list = ["frameNumber", "markerSetCount", "unlabeledMarkersCount", #type: ignore  # noqa F841
+                  "rigidBodyCount", "skeletonCount", "labeledMarkerCount",
+                  "timecode", "timecodeSub", "timestamp", "isRecording",
+                  "trackedModelsChanged", "offset", "mocap_data"]
+    dump_args = True
+    if dump_args is True:
+        out_string = "    "
+        for key in data_dict:
+            out_string += key + "= "
+            if key in data_dict:
+                out_string += str(data_dict[key]) + " "
+            out_string += "/"
+        #print(out_string)
+
+if __name__ == "__main__":
+    
+    ChannelFactoryInitialize(0, "eno1")
+
+    #Crear un diccionario con las opciones de conexión
+    optionsDict = {}
+    optionsDict["clientAddress"] = "192.168.0.138"
+    optionsDict["serverAddress"] = "192.168.0.157"
+    optionsDict["use_multicast"] = False
+    optionsDict["stream_type"] = 'd'
+    stream_type_arg = None
+
+    #Crear el cliente NatNet
+    streaming_client = NatNetClient()
+    streaming_client.set_client_address(optionsDict["clientAddress"])
+    streaming_client.set_server_address(optionsDict["serverAddress"])
+    streaming_client.set_use_multicast(optionsDict["use_multicast"])
+
+    #Configurar el cliente de streaming
+    streaming_client.new_frame_with_data_listener = receive_new_frame_with_data
+
+    #Iniciar el cliente de streaming
+    #Se ejecuta de forma continua y en un hilo separado
+    is_running = streaming_client.run(optionsDict["stream_type"])
+
+    if not is_running:
+        print("ERROR: Could not start streaming client.")
+        try:
+            sys.exit(1)
+        except SystemExit:
+            print("...")
+        finally:
+            print("exiting")
+    
+    print("Esperando conexión...")
+    time.sleep(2)  #Dar tiempo para conectar
+
+    if streaming_client.connected() is False:
+        print("ERROR: Could not connect properly.  Check that Motive streaming is on.") #type: ignore  # noqa F501
+        try:
+            sys.exit(2)
+        except SystemExit:
+            print("...")
+        finally:
+            print("exiting")
+
+    sport_client = SportClient()  
+    sport_client.SetTimeout(10.0)
+    sport_client.Init()
+
+    actual_pos = []         #Posicion actual del robot
+    objetive_pos = []       #Posicion del objetivo
+    finalizado = False      #Activar cuando el robot alcance el objetivo
+    trainnig_data = []      #Lista de datos de entrenamiento
+
+    print("\nIniciando...\n")
+    sport_client.StandUp()
+    time.sleep(2)
+    sport_client.ClassicWalk(True)
+    time.sleep(2)
+
+    actual_pos = streaming_client.get_last_pos()
+
+    for i in range(1, 501):
+        
+        print(f"--- Iteración {i} ---")
+
+        if i % 25 == 0:
+            print("Guardando datos")
+            inputs = np.array([item[0] for item in trainnig_data])
+            outputs = np.array([item[1] for item in trainnig_data])
+
+            #Guardar datos
+            with open("training_data_prob_10.pkl", "wb") as f:
+                pickle.dump({
+                    'inputs': inputs,
+                    'outputs': outputs
+                }, f)
+
+        objetive_pos = streaming_client.get_objetive_pos()  #Actualizar la posición del objetivo
+
+        obs_t = actual_pos  #Obtenemos las observaciones en T
+        distanciaT = distancia(obs_t, objetive_pos)
+        alfa_objT = alfa_obj(obs_t, objetive_pos)
+        alfa_robotT = alfa_robot(obs_t)
+
+        action = random_action()  #Obtenemos una acción aleatoria
+
+        datos_entrada = np.array([distanciaT, alfa_objT, alfa_robotT, action[0], action[1], action[2]])
+        print(f"Datos de entrada: {datos_entrada}")
+        
+        #Ejecutar la acción
+        sport_client.Move(action[0], action[1], action[2])
+
+        #Esperar a que acabe el movimiento
+        time.sleep(3)
+        
+        #Comprobar si el robot se ha salido de los límites establecidos
+        if actual_pos[1][0] >= 2.0 or actual_pos[1][0] <= -1.1 or actual_pos[1][2] >= 1.25 or actual_pos[1][2] <= -1.4:
+            out_of_limits()
+            actual_pos = streaming_client.get_last_pos()
+            continue #Saltar el resto del bucle y volver al inicio
+        else:
+            actual_pos = streaming_client.get_last_pos()
+
+        #Obtenemos las observaciones en T+1
+        obs_t1 = actual_pos  
+        
+        distanciaT1 = distancia(obs_t1, objetive_pos)
+        alfa_objT1 = alfa_obj(obs_t1, objetive_pos)
+        alfa_robotT1 = alfa_robot(obs_t1)
+
+        print("\n")
+        print(f"Observaciones en T:\n x={obs_t[0][0]}, y={obs_t[0][1]}, z={obs_t[0][2]}\nx={obs_t[1][0]}, y={obs_t[1][1]}, z={obs_t[1][2]}\nx={obs_t[2][0]}, y={obs_t[2][1]}, z={obs_t[2][2]}")
+        print(f"Posicion objetivo: x={objetive_pos[0]}, z={objetive_pos[2]}")
+        print(f"Observaciones en T: distancia={distanciaT}, alfa_obj={alfa_objT}, alfa_robot={alfa_robotT}")
+        print(f"Acción tomada: {action}")
+        print(f"Posición actual:\n x={actual_pos[0][0]}, y={actual_pos[0][1]}, z={actual_pos[0][2]}\nx={actual_pos[1][0]}, y={actual_pos[1][1]}, z={actual_pos[1][2]}\nx={actual_pos[2][0]}, y={actual_pos[2][1]}, z={actual_pos[2][2]}")
+        print(f"Observaciones en T1: distancia={distanciaT1}, alfa_obj={alfa_objT1}, alfa_robot={alfa_robotT1}")
+        print("\n")
+
+        print("Distancia al objetivo:")
+        print(distanciaT1)
+        
+        #Comprobar si el robot ha alcanzado el objetivo
+        if distanciaT1 <= 0.3:
+            print("Objetivo alcanzado.\n")
+            finalizado = True
+            sport_client.StopMove()
+            time.sleep(2)
+            
+            datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
+            trainnig_data.append((datos_entrada, datos_salida))
+
+            break
+            
+
+        datos_salida = np.array([distanciaT1, alfa_objT1, alfa_robotT1])
+        trainnig_data.append((datos_entrada, datos_salida))   
+        
+    sport_client.StopMove()
+    time.sleep(2)
+    sport_client.StandDown()
+    time.sleep(3)
+
+    print(f"Total de transiciones recolectadas: {len(trainnig_data)}")
+    print(f"Transiciones recolectadas: {trainnig_data}")
+
+    inputs = np.array([item[0] for item in trainnig_data])
+    outputs = np.array([item[1] for item in trainnig_data])
+
+    # Guardar
+    with open("training_data_10.pkl", "wb") as f:
+        pickle.dump({
+            'inputs': inputs,
+            'outputs': outputs
+        }, f)
+    
+    #Detener el cliente de streaming
+    print("Deteniendo el cliente de streaming...")
+    streaming_client.shutdown()
