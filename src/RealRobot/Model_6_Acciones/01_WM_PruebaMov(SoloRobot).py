@@ -109,32 +109,14 @@ if __name__ == "__main__":
             #No se que hace
             sport_client.Move(0,0,1.57)
         elif test_option.id == 8:
-            #Bound run mode(Trotar)
-            sport_client.FreeBound(True)
+            sport_client.Scrape()
         elif test_option.id == 9:
-            #Bound agile mode
-            sport_client.FreeBound(False)
+            sport_client.Hello()
         elif test_option.id == 10:
-            #Bound jump mode
-            sport_client.FreeJump(True)
-        elif test_option.id == 11:
-            #Modo paso cruzado
-            sport_client.CrossStep(True)
-        elif test_option.id == 12:
             #Modo marcha clásico        (Este)
             sport_client.ClassicWalk(True)
-        elif test_option.id == 13:
-            #Entra en el modo de correr normal
-            sport_client.TrotRun()
-        elif test_option.id == 14:
-            #Entra en el modo de caminar normal
-            sport_client.StaticWalk()
-        elif test_option.id == 15:
-            #Entra en el modo resistencia normal
-            sport_client.EconomicGait()
-        elif test_option.id == 16:
-            #Entra en el estado de amortiguación
-            sport_client.Damp()
+        
+        
         
 
         time.sleep(1)

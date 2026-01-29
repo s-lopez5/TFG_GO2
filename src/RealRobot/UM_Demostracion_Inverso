@@ -238,7 +238,7 @@ if __name__ == "__main__":
     #Cargar modelos entrenados
     print("Cargando modelos de mundo y utilidad...")
     world_model = keras.models.load_model("world_model_continuo_1168_2_ES50.keras")
-    utility_model = keras.models.load_model("utility_model_100_1.keras")
+    utility_model = keras.models.load_model("utility_model_inverso.keras")
     print("Modelos cargados correctamente.\n")
 
     #Cargar parámetros de normalización del modelo de mundo
@@ -253,7 +253,7 @@ if __name__ == "__main__":
 
     #Cargar parámetros de normalización del modelo de utilidad
     print("Cargando parámetros de normalización del modelo de utilidad...")
-    with open('normalization_params_UM.pkl', 'rb') as f:
+    with open('normalization_params_inverso_UM.pkl', 'rb') as f:
         norm_params_um = pickle.load(f)
         input_mean_um = norm_params_um['input_mean']
         input_std_um = norm_params_um['input_std']
@@ -261,7 +261,7 @@ if __name__ == "__main__":
 
     actual_pos = []         #Posicion actual del robot
     objetive_pos = []       #Posicion del objetivo
-    finalizado = 0      #Contador de objetivos alcanzados
+    finalizado = False      #Activar cuando el robot alcance el objetivo
 
     print("\nIniciando...\n")
     sport_client.StandUp()
@@ -297,16 +297,8 @@ if __name__ == "__main__":
         sport_client.Move(action[0], action[1], action[2])
         time.sleep(1)
 
-        #Comprobar si el robot se ha salido de los límites establecidos
-        if actual_pos[1][0] >= 2.0 or actual_pos[1][0] <= -1.1 or actual_pos[1][2] >= 1.25 or actual_pos[1][2] <= -1.4:
-            out_of_limits()
-
-            #Actualizar posicion despues del volver dentro de los limites
-            actual_pos = streaming_client.get_last_pos()
-        
-            continue
-        else:
-            actual_pos = streaming_client.get_last_pos()
+        #Actualizar la posición actual del robot
+        actual_pos = streaming_client.get_last_pos()
 
         #Obtenemos las observaciones en T+1
         distanciaT1 = distancia(actual_pos, objetive_pos)
@@ -321,28 +313,13 @@ if __name__ == "__main__":
         print("Distancia al objetivo:")
         print(distanciaT1)
 
-        #Comprobar si el robot ha alcanzado el objetivo
-        if distanciaT1 <= 0.3:
+        #Comprobar si el robot se ha salido de los límites establecidos
+        if actual_pos[1][0] >= 2.0 or actual_pos[1][0] <= -1.1 or actual_pos[1][2] >= 1.25 or actual_pos[1][2] <= -1.4:
             print("Objetivo alcanzado.\n")
-            finalizado += 1
-
-            if finalizado == 1:
-                sport_client.Hello()
-            elif finalizado == 2:
-                sport_client.Scrape()
-            elif finalizado == 3:
-                sport_client.Content()
-            elif finalizado == 4:
-                sport_client.Heart()
-            else:
-                sport_client.Dance1()
-                time.sleep(5)
-                sport_client.StandDown()
             
-            time.sleep(5)
+            sport_client.StopMove()
+            time.sleep(2)
 
-        if finalizado >= 5:
-            print("Se han alcanzado 5 objetivos. Finalizando la demostración.\n")
             break
 
     sport_client.StopMove()

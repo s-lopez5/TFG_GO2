@@ -2109,7 +2109,7 @@ class NatNetClient:
                 #Obtener datos de los markers
                 if mocap_data.marker_set_data:
                     for i, marker_data in enumerate(mocap_data.marker_set_data.marker_data_list):
-                        if marker_data.model_name.decode('utf-8') == "Objetivo":
+                        if marker_data.model_name.decode('utf-8') == "Objetivo2":
                             #if self.obj_localized != True:
                             #    self.obj_localized = True
 

@@ -123,5 +123,6 @@ if __name__ == "__main__":
         alfa_robotT = alfa_robot(actual_pos)
 
         print(f"Posición Actual del Robot: {actual_pos}")
-        print(f"Posición del Objetivo: {objetive_pos}")
-        print(f"Distancia: {distanciaT:.3f} m, Alfa Objetivo: {np.degrees(alfa_objT):.2f}°, Alfa Robot: {np.degrees(alfa_robotT):.2f}°")
+        #print(f"Posición del Objetivo: {objetive_pos}")
+        #print(f"Distancia: {distanciaT:.3f} m, Alfa Objetivo: {np.degrees(alfa_objT):.2f}°, Alfa Robot: {np.degrees(alfa_robotT):.2f}°")
+        time.sleep(3)

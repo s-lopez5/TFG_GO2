@@ -22,7 +22,7 @@ def load_utility_data():
 
     print("Cargando datos de utilidad...")
 
-    with open("UM_utility_data_100.pkl", "rb") as f:
+    with open("UM_utility_data_100_inverso.pkl", "rb") as f:
         utility_data = pickle.load(f)
         inputs = utility_data['arrays']
         utilities = utility_data['utility']
@@ -62,7 +62,7 @@ def plot_training_history(history):
     ax2.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('UM_training_history_100_2_1.png', dpi=300, bbox_inches='tight')
+    plt.savefig('UM_training_history_100_inverso.png', dpi=300, bbox_inches='tight')
     print("\nGráfica de entrenamiento guardada")
     plt.show()
 
@@ -146,7 +146,7 @@ def plot_prediction_examples(model, X_test, y_test, input_mean, input_std, n_exa
             bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
     
     plt.tight_layout()
-    plt.savefig('UM_prediction_example_100_2_1.png', dpi=300, bbox_inches='tight')
+    plt.savefig('UM_prediction_example_100_inverso.png', dpi=300, bbox_inches='tight')
     print("\nGráfica de ejemplos guardada")
     print(f"Error Absoluto Medio (MAE): {mae:.4f}")
     print(f"Error Cuadrático Medio (MSE): {mse:.4f}")
@@ -362,7 +362,7 @@ if __name__ == "__main__":
     print(f"Validación    - MSE: {val_loss:.6f}, MAE: {val_mae:.6f}")
     
     #Guardar el modelo final
-    model.save("utility_model_100_3.keras")
+    model.save("utility_model_inverso.keras")
 
     #Guardar parámetros de normalización
     normalization_params = {
@@ -370,7 +370,7 @@ if __name__ == "__main__":
         'input_std': input_std
     }
     
-    with open('normalization_params_UM.pkl', 'wb') as f:
+    with open('normalization_params_inverso_UM.pkl', 'wb') as f:
         pickle.dump({
             'input_mean': input_mean,
             'input_std': input_std
