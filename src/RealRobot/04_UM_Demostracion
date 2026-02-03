@@ -336,7 +336,7 @@ if __name__ == "__main__":
                 sport_client.Heart()
             else:
                 sport_client.Dance1()
-                time.sleep(5)
+                time.sleep(10)
                 sport_client.StandDown()
             
             time.sleep(5)
