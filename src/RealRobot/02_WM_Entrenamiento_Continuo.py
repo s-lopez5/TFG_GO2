@@ -62,7 +62,7 @@ model = keras.Sequential([
     
     layers.Dense(64, activation='relu'),
     
-    layers.Dense(3)  # [distanciaT1, alfa_objT1, alfa_robotT1]
+    layers.Dense(3)  #[distanciaT1, alfa_objT1, alfa_robotT1]
 ])
 
 #Compilar el modelo

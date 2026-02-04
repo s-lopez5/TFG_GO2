@@ -47,7 +47,7 @@ if __name__ == "__main__":
     
     """
     model = keras.Sequential([
-        layers.Input(shape=(3,)),  # [distancia_t1, alfa_obj_t1, alfa_robot_t1]
+        layers.Input(shape=(5,)),  #[distancia_t, alfa_obj_t, 0, alfa_robot_t, beta_robot_t]
         
         layers.Dense(64, activation='relu'),
         layers.BatchNormalization(),
@@ -64,11 +64,11 @@ if __name__ == "__main__":
         layers.Dense(32, activation='relu'),
         layers.Dropout(0.2),
         
-        layers.Dense(1)  # Valor de utilidad (escalar)
+        layers.Dense(3)  #[distanciaT1, alfa_objT1, alfa_robotT1]
     ])
 
     model = keras.Sequential([
-        layers.Input(shape=(3,)),   # [distancia_t1, alfa_obj_t1, alfa_robot_t1]
+        layers.Input(shape=(5,)),   #[distancia_t, alfa_obj_t, 0, alfa_robot_t, beta_robot_t]
         
         layers.Dense(32),
         layers.BatchNormalization(),
@@ -85,12 +85,12 @@ if __name__ == "__main__":
         layers.Activation('relu'),
         layers.Dropout(0.1),
         
-        layers.Dense(1) # Valor de utilidad
+        layers.Dense(3)     #[distanciaT1, alfa_objT1, alfa_robotT1]
     ])
 
     #Modelo simple
     model = keras.Sequential([
-        layers.Input(shape=(3,)),
+        layers.Input(shape=(5,)),   #[distancia_t, alfa_obj_t, 0, alfa_robot_t, beta_robot_t]
         
         layers.Dense(16, activation='relu'),
         layers.Dropout(0.2),
@@ -98,32 +98,22 @@ if __name__ == "__main__":
         layers.Dense(8, activation='relu'),
         layers.Dropout(0.1),
         
-        layers.Dense(1)
+        layers.Dense(3)   #[distanciaT1, alfa_objT1, alfa_robotT1]
     ])
     """
 
+    #Modelo simple
     model = keras.Sequential([
-        layers.Input(shape=(3,)),   # [distancia_t1, alfa_obj_t1, alfa_robot_t1]
+        layers.Input(shape=(5,)),   #[distancia_t, alfa_obj_t, 0, alfa_robot_t, beta_robot_t]
         
-        layers.Dense(32),
-        layers.BatchNormalization(),
-        layers.Activation('relu'),
+        layers.Dense(16, activation='relu'),
         layers.Dropout(0.2),
         
-        layers.Dense(64),
-        layers.BatchNormalization(),
-        layers.Activation('relu'),
-        layers.Dropout(0.2),
-        
-        layers.Dense(32),
-        layers.BatchNormalization(),
-        layers.Activation('relu'),
+        layers.Dense(8, activation='relu'),
         layers.Dropout(0.1),
         
-        layers.Dense(1) # Valor de utilidad
+        layers.Dense(3)   #[distanciaT1, alfa_objT1, alfa_robotT1]
     ])
-
-    
     
     #Compilar el modelo
     model.compile(
@@ -203,9 +193,7 @@ if __name__ == "__main__":
 
     #Límites para MSE
     ax1.set_xlim(0, len(history.history['loss']))
-    mse_min = min(min(history.history['loss']), min(history.history['val_loss']))
-    mse_max = max(max(history.history['loss']), max(history.history['val_loss']))
-    ax1.set_ylim(0, mse_max * 1.1)
+    ax1.set_ylim(0, 1.1)
     
     #MAE
     ax2.plot(history.history['mae'], label='Train MAE', linewidth=2)
@@ -218,14 +206,13 @@ if __name__ == "__main__":
 
     # Límites para MAE
     ax2.set_xlim(0, len(history.history['mae']))
-    mae_min = min(min(history.history['mae']), min(history.history['val_mae']))
-    mae_max = max(max(history.history['mae']), max(history.history['val_mae']))
-    ax2.set_ylim(0, mae_max * 1.1)
+    ax1.set_ylim(0, 1.1)
     
     plt.tight_layout()
-    plt.savefig('WM_Brazo_training_metrics.png', dpi=300, bbox_inches='tight')
+    plt.savefig('WM_Brazo_training_metrics_1.png', dpi=300, bbox_inches='tight')
     print("\n✓ Gráfica de métricas guardada: training_metrics.png")
     plt.close()
+
 
     #Gráfica 2: Predicciones vs Valores Reales (solo distancia y ángulo al objetivo)
     #Hacer predicciones en el conjunto de validación
@@ -240,6 +227,12 @@ if __name__ == "__main__":
     output_names = ['Distancia', 'Ángulo al Objetivo']
     output_indices = [0, 1]  # Solo índices 0 y 1
     
+    #Definir límites específicos para cada salida
+    limites = {
+        0: (0, 1),      #Distancia: 0 a 1
+        1: (-3.5, 3.5),   #Ángulo al Objetivo: -3.5 a 3.5
+    }
+
     for ax, name, idx in zip(axes, output_names, output_indices):
         ax.scatter(y_val_original[:, idx], y_pred[:, idx], alpha=0.5, s=20)
         
@@ -254,27 +247,28 @@ if __name__ == "__main__":
         ax.legend(fontsize=10)
         ax.grid(True, alpha=0.3)
 
-        """
-        # Establecer límites en los ejes
-        ax.set_xlim(0, 1)
-        ax.set_ylim(0, 1)
-        """
-        
+        #Límites específicos por índice
+        if idx in limites:
+            ax.set_xlim(limites[idx])
+            ax.set_ylim(limites[idx])
+
         #Calcular R²
         correlation_matrix = np.corrcoef(y_val_original[:, idx], y_pred[:, idx])
         r_squared = correlation_matrix[0, 1]**2
+        
+        #Mostrar R² en la gráfica
         ax.text(0.05, 0.95, f'R² = {r_squared:.4f}', 
                 transform=ax.transAxes, fontsize=11,
                 verticalalignment='top',
                 bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
     
     plt.tight_layout()
-    plt.savefig('WM_Brazo_Predicciones.png', dpi=300, bbox_inches='tight')
+    plt.savefig('WM_Brazo_Predicciones_1.png', dpi=300, bbox_inches='tight')
     print("✓ Gráfica de predicciones guardada: WM_Brazo_Predicciones.png")
     plt.close()
 
     #Guardar el modelo final
-    model.save("utility_model_inverso.keras")
+    model.save("WM_brazo_robot_1.keras")
 
     #Guardar las estadísticas de normalización
     with open("normalization_stats_WM_Brazo.pkl", "wb") as f:

@@ -1,6 +1,3 @@
-import time
-import sys
-import os
 import numpy as np
 import random
 import pickle
@@ -38,9 +35,6 @@ def pos_objetivo(L):
     x_prima = L * (np.cos(np.radians(alfa)) + np.cos(np.radians(beta)))
     y_prima = L * (np.sin(np.radians(alfa)) + np.sin(np.radians(beta)))
     return x_prima, y_prima
-    """
-    return random.uniform(0, 1), random.uniform(0, 1)
-    """
 
 def random_action():
     """
@@ -53,22 +47,22 @@ def random_action():
 if __name__ == "__main__":
     WM_Data = []
 
-    L = 0.2  #Longitud del brazo del robot
+    L = 1.0  #Longitud del brazo del robot
     x_obj, y_obj = pos_objetivo(L)
     print(f"Posición objetivo: ({x_obj}, {y_obj})")
 
     alfa, beta = random.randint(0, 90), random.randint(0, 90)  #Ángulos iniciales
 
-    for i in range(1000):  #Simular 1000 pasos
+    for i in range(10000):  #Simular 10000 pasos
         
         print(f"--- Iteración {i} ---")
 
-        """
-        #Cada 100 iteraciones, cambiar la posicion del objetivo
-        if i % 100 == 0:
+        
+        #Cada 200 iteraciones, cambiar la posicion del objetivo
+        if i % 200 == 0:
             x_obj, y_obj = pos_objetivo(L)
             print(f"Nuevo objetivo en: ({x_obj}, {y_obj})")
-        """
+        
 
         #Posicion en el paso t
         x_robot = pos_x2(L, alfa, beta)
@@ -88,7 +82,6 @@ if __name__ == "__main__":
             continue
         
         #Datos de entrada para el paso t(distancia, ángulo al objetivo, cambios en alfa y beta)
-        #datos_entrada = np.array([obs_t[0], obs_t[1], delta_alfa, delta_beta])
         datos_entrada = np.array([obs_t[0], obs_t[1], 0, delta_alfa, delta_beta])
 
         #Actualizar ángulos
@@ -117,14 +110,14 @@ if __name__ == "__main__":
         WM_Data.append((datos_entrada, obs_t1))
 
     print(f"Total de transiciones recolectadas: {len(WM_Data)}")
-    print(f"Transiciones recolectadas: {WM_Data}")
+    #print(f"Transiciones recolectadas: {WM_Data}")
     
     #Separar entradas y salidas
     inputs = np.array([item[0] for item in WM_Data])
     outputs = np.array([item[1] for item in WM_Data])
 
     #Guardar los datos en un archivo pickle
-    with open("WM_data_Brazo_Robot.pkl", "wb") as f:
+    with open("WM_data_Brazo_Robot2.pkl", "wb") as f:
             pickle.dump({
             'inputs': inputs,
             'outputs': outputs
