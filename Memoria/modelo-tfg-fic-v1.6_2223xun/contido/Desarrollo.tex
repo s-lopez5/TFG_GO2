@@ -62,7 +62,7 @@ a formar parte de la escena junto con el robot, apareciendo en la ubicación ind
 Esta incorporación permite extraer las observaciones necesarias para el entrenamiento del modelo de mundo, ya que el sistema puede aprender la relación entre las acciones ejecutadas 
 y las variaciones en la posición de los objetos del entorno.
 
-\begin{lstlisting}[language=XML, caption=Codigo Scene.xml, label=lst:scene_xml]
+\begin{lstlisting}[language=XML, caption=Código Scene.xml, label=lst:scene_xml]
   <mujoco model="go2 scene">
     <include file="go2.xml"/>
     <include file="model_box.xml"/>
@@ -93,7 +93,7 @@ y las variaciones en la posición de los objetos del entorno.
   </mujoco>
 \end{lstlisting}
 
-\begin{lstlisting}[language=XML, caption=Codigo Model\_box.xml, label=lst:model_box_xml]
+\begin{lstlisting}[language=XML, caption=Código Model\_box.xml, label=lst:model_box_xml]
   <mujoco>
       <worldbody>
           <body name="box" pos="0.5 0 0.3">
@@ -110,7 +110,7 @@ incluían confirmar que la simulación cargaba sin errores, que tanto el robot c
 adecuada para comenzar a moverse), así como asegurar que la simulación avanzaba de forma correcta.
 
 Para ello se inicializaron las variables destinadas a guardar la información del modelo y los datos procedentes de los objetos del \Gls{xml}, y posteriormente se ejecutó el launcher para iniciar 
-la simulación (como se puede apreciar en la figura~\ref{fig:Sim_Go2}, páxina~\pageref{fig:Sim_Go2}).
+la simulación (como se puede apreciar en la figura~\ref{fig:Sim_Go2}, página~\pageref{fig:Sim_Go2}).
 
 \begin{lstlisting}[language=Python]
   model = mj.MjModel.from_xml_path(" /home/santilopez/Documentos/TFG_GO2/model_unitree_go2/scene.xml")
@@ -124,7 +124,7 @@ la simulación (como se puede apreciar en la figura~\ref{fig:Sim_Go2}, páxina~\
 \begin{figure}[hp!]
   \centering
   \includegraphics[width=0.75\textwidth]{imaxes/SimulacionGo2.png}
-  \caption{Ventana de simulacion de MuJoCo.}
+  \caption{Ventana de simulación de MuJoCo.}
   \label{fig:Sim_Go2}
 \end{figure}
 
@@ -275,7 +275,7 @@ obtener resultados válidos en el entorno real.
 \section{Desarrollo en robot cuadrúpedo}
 \label{sec:desarrollo_robot_cuadrupedo}
 
-Después de la cancelación de la fase de simulación, el desarrollo del proyecto pasó a centrarse en el entorno real con el robot cuadrupedo Unitree Go2. Esto permitió reorientar el trabajo hacia 
+Después de la cancelación de la fase de simulación, el desarrollo del proyecto pasó a centrarse en el entorno real con el robot cuadrúpedo Unitree Go2. Esto permitió reorientar el trabajo hacia 
 una alternativa más viable, gracias a disponer de funciones de control de alto nivel proporcionadas por el \Gls{sdk} del robot. Sumado a esto, se contaba con un sistema de captura de movimiento 
 externo a través del sistema de cámaras Optitrack con el que se obtendrían las observaciones necesarias para el entrenamiento.
 
@@ -292,15 +292,15 @@ En el siguiente enlace se puede acceder al repositorio de GitHub con el código 
 \subsection{Configuración del sistema Optitrack}
 \label{sec:desarrollo_conf_optitrack}
 
-El primer paso de esta configuración consistió en dejar completamente operativa la infraestructura de captura de movimiento. Como se explicó previamente en el apartado de Tecnologias 
-Empleadas (sección \ref{sec:tecnologias_empleadas}, página \pageref{sec:tecnologias_empleadas}), dispondremos de un sistema Optitrack compuesto por 8 cámaras de Primex 13W distribuidas alrededor del espacio de trabajo, conectadas a un ordenador Intel NUC donde se 
+El primer paso de esta configuración consistió en dejar completamente operativa la infraestructura de captura de movimiento. Como se explicó previamente en el apartado de Tecnologías 
+empleadas (sección \ref{sec:tecnologias_empleadas}, página \pageref{sec:tecnologias_empleadas}), dispondremos de un sistema Optitrack compuesto por 8 cámaras de Primex 13W distribuidas alrededor del espacio de trabajo, conectadas a un ordenador Intel NUC donde se 
 ejecuta Motive. Este equipo fue el encargado de actuar a modo de servidor de streaming para transmitir los datos al ordenador del estudiante, en el que se ejecutaron los \gls{script}s de Python 
 encargados del control del robot, la obtención de datos y del entrenamiento de los modelos. Para llevar a cabo esta puesta a punto del sistema se realizaron varias tareas de configuración 
 que explicaremos a continuación.
 
 En primer lugar, se procedió a la calibración del sistema de cámaras y del volumen de trabajo. Esta fase fue especialmente importante para asegurar que la posición obtenida del Motive fuese lo 
 suficientemente precisa y estable para ser utilizada posteriormente para el entrenamiento de los modelos. El proceso a seguir para calibrar el sistema se encuentra explicado en el 
-seccion \ref{sec:tecnologias_empleadas} (pagina \pageref{sec:tecnologias_empleadas}). 
+sección \ref{sec:tecnologias_empleadas} (página \pageref{sec:tecnologias_empleadas}). 
 
 Una vez completado este proceso, se verificó que el volumen de captura (ver figura \ref{fig:volumen_captura}, sección \ref{sec:entorno_optitrack}) se encontraba definido 
 de manera correcta y que no se encontraban errores que pudiesen entorpecer la obtención de datos. Durante una de las calibraciones finales tras la instalación de las cuatro cámaras adicionales 
@@ -347,7 +347,7 @@ al otro sin conexión. Para solventarlo fue necesario crear interfaces de red di
 
 Con el streaming de datos funcionando de manera correcta, se integró el \Gls{sdk} de NatNet en Python. Este se encargaba de recibir los paquetes \Gls{udp} enviados por Motive y traducir la información 
 a los datos referentes a la posición de los objetos captados. Para esto fue necesario adaptar la recepción para filtrar los datos relevantes a través de los nombres de los \gls{markerset}s y separar la 
-información adicional que transmite el programa. Esta modificación permitió obtener la posición de cada uno de los marcadores asignados a los \gls{markerset} para procesarla posteriormente en 
+información adicional que transmite el programa. Esta modificación permitió obtener la posición de cada uno de los marcadores asignados a los \gls{markerset}s para procesarla posteriormente en 
 el \gls{script}.
 
 El código de NatNet proporcionado en el repositorio se utilizó en su mayoría sin modificaciones. Los cambios se realizaron en el fichero “NatNetClient.py”, en el que se define la 
@@ -416,7 +416,7 @@ guardar toda la información, ya que únicamente necesitamos un punto con el que
 En paralelo a la configuración del sistema de Optitrack fue necesario preparar el robot Unitree Go2 para su funcionamiento e integración con los demás componentes del sistema. La primera 
 tarea consistió en establecer la conexión entre el robot y el ordenador desde el que se ejecutaron los \gls{script}s de control. Para ello se utilizó una conexión Ethernet, ya que en el momento 
 el \Gls{sdk} no soportaba vía WiFi y esta era la única manera de enviar instrucciones desde el código. Fue necesario utilizar un cable con la suficiente longitud (en nuestro caso se utilizó un 
-cable de 15 metros) para permitir al robot moverse libremente dentro del volumen de captura sin comprometer su integridad.
+cable de 15 m) para permitir al robot moverse libremente dentro del volumen de captura sin comprometer su integridad.
 
 Una vez establecida la conectividad, se realizaron pruebas básicas con el \Gls{sdk} en Python para comprobar que el ordenador era capaz de comunicarse de manera correcta con el robot y este 
 recibiera los comandos. Estas comprobaciones buscaban asegurar que el sistema podía enviar órdenes y el robot era capaz de recibirlas y realizarlas. A partir de aquí se procedió a comprobar 
@@ -442,7 +442,7 @@ la creación del conjunto de datos para entrenar los modelos de mundo y de utili
 
 Estas acciones se realizaban a través del cliente del \Gls{sdk}, \textit{sport\_client}, utilizando la función \textit{sport\_client.Move(accion[0], accion[1], accion[2])}. El primer parámetro es 
 el que indica la velocidad en línea recta que debe avanzar el robot, en la que se utilizan los valores antes mencionados. El segundo parámetro corresponde con la velocidad de desplazamiento 
-lateral, que en este caso no se utilizará y tendrá siempre el valor 0. En cuanto al último parámetro, hace referencia a la velocidad de giro sobre el eje vertical en rad/s, tambien con los 
+lateral, que en este caso no se utilizará y tendrá siempre el valor 0. En cuanto al último parámetro, hace referencia a la velocidad de giro sobre el eje vertical en rad/s, también con los 
 valores mencionados anteriormente.
 
 Antes de comenzar con la obtención de datos, fue necesario realizar unas serie de pruebas de seguridad. En ellas se especificaron los límites del área de trabajo en la cual el robot iba a 
@@ -455,7 +455,7 @@ durante las pruebas en entorno real.
 \begin{figure}[hp!]
   \centering
   \includegraphics[width=0.5\textwidth]{imaxes/EntornoTrabajo.png}
-  \caption{Limites del espacio de trabajo.}
+  \caption{Límites del espacio de trabajo.}
   \label{fig:entorno_trabajo}
 \end{figure}
 
@@ -514,7 +514,7 @@ construir un conjunto de datos suficiente.
 Con el fin de lograr un modelo eficiente que fuese capaz de generalizar de manera adecuada, fue necesario obtener una cantidad suficiente de datos en los que se explore todo el espacio de 
 trabajo. Además, para conseguir aumentar la cantidad de escenarios explorados, la posición del robot y del objetivo se modificaron en cada episodio.
 
-Este proceso de recolección de datos llevó aproximadamente 2 semanas trabajando 4 horas diarias en los que finalmente se recolectaron un total de 1200 muestras que formaron el conjunto de 
+Este proceso de recolección de datos llevó aproximadamente 2 semanas trabajando 4 horas diarias en los que finalmente se recolectaron un total de 1.200 muestras que formaron el conjunto de 
 datos con los que posteriormente se entrenaría el modelo de mundo.
 
 Durante el desarrollo de este \gls{script} se prestó especial atención a la cohesión entre la ejecución de las acciones y la obtención de las observaciones. Siendo este uno de los puntos 
@@ -580,7 +580,7 @@ similar. Esto indica que el modelo es capaz de generalizar de manera adecuada so
 \end{figure}
 
 Por otro lado, la figura \ref{fig:WM_predicciones} compara las predicciones realizadas por el modelo con los valores reales de un conjunto de 50 ejemplos. Esta figura se divide en 3 
-subgraficas, una para cada uno de los valores que se utilizan como observaciones (distancia, ángulo con el objetivo y ángulo sobre sí mismo). En los tres casos se puede observar como la 
+subgráficas, una para cada uno de los valores que se utilizan como observaciones (distancia, ángulo con el objetivo y ángulo sobre sí mismo). En los tres casos se puede observar como la 
 mayoría de las predicciones son acertadas o se presentan muy poco error, lo que indica que el modelo es capaz de aproximar de manera correcta el estado siguiente a una observación tras 
 ejecutar una acción.
 
@@ -828,7 +828,7 @@ una acción. A través de esta secuencia se puede observar como el sistema es ca
     \label{fig:Secuencia_ejecucion_sistema_8}
   \end{subfigure}
 
-  \caption{Secuencia de imagenes de una ejecución del sistema deliberativo.}
+  \caption{Secuencia de imágenes de una ejecución del sistema deliberativo (\url{https://github.com/s-lopez5/TFG_GO2/blob/main/VideosRobot/Video1.MP4}).}
   \label{fig:Secuencia_ejecucion_sistema}
 \end{figure}
 
@@ -952,7 +952,7 @@ salir del espacio de trabajo.
   \end{subfigure}
   \hfill
 
-  \caption{Secuencia de imagenes de una ejecución con el modelo de utilidad nuevo.}
+  \caption{Secuencia de imagenes de una ejecución con el modelo de utilidad nuevo (\url{https://github.com/s-lopez5/TFG_GO2/blob/main/VideosRobot/Video2DemostracionInversa.MP4}).}
   \label{fig:Secuencia_ejecucion_inverso}
 \end{figure}
 
@@ -1032,7 +1032,7 @@ objetivo, pero a la hora de realizar esta comunicación se añadiría un tercer 
 En cuanto al proceso de recolección de datos y entrenamiento del modelo se realizó de manera similar al realizado con el modelo original del robot Go2. Para obtener el conjunto de datos de 
 entrenamiento se ejecutó una simulación en Python (sin interfaz gráfica) en la que en cada iteración se calculaba la posición del brazo antes y después de realizar la acción mediante la fórmula 
 explicada previamente. Estas acciones se definieron como incrementos o decrementos en ambos ángulos, los cuales se seleccionan de manera aleatoria en un intervalo de 15º a -15º. Tras 
-aproximadamente 30 minutos de ejecución se recolectaron un total de 8365 muestras.
+aproximadamente 30 minutos de ejecución se recolectaron un total de 8.365 muestras.
 
 El siguiente paso era entrenar el modelo de utilidad con los datos recolectados. Para esto se empleó el mismo proceso que con los modelos previos. Se realizó el preprocesado de datos igual 
 que en apartados anteriores y se seleccionó una estructura de red de 4 capas con 64, 128, 64 y 32 neuronas respectivamente. Se utilizó Adam como optimizador y el MSE y MAE como métricas. También 

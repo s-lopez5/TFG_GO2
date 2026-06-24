@@ -88,7 +88,7 @@ desenvolvimiento de este trabajo:
 \end{itemize}
 
 Como conclusión, esta metodología permitió obtener resultados parciales evaluables según avanzaba el proyecto y corregir el rumbo 
-cuando surgieron situaciones o problemas que dificultaron el avance del trabajo (Como se puede observar en la sección \ref{sec:desviaciones_planificacion}, 
+cuando surgieron situaciones o problemas que dificultaron el avance del trabajo (como se puede observar en la sección \ref{sec:desviaciones_planificacion}, 
 página \pageref{sec:desviaciones_planificacion}).
 
 \subsection{Herramientas de apoyo a la metodología}
@@ -159,7 +159,7 @@ riesgos y limitaciones, y especificando las tecnologías necesarias.
     El alcance inicial del proyecto se planteó en dos líneas:
 
     \begin{itemize}
-        \item Desarrollo en entorno simulado (MuJoCo): creación del entorno, integración de este con el modelo \Gls{xml} del robot y 
+        \item Desarrollo en entorno simulado (MuJoCo): Creación del entorno, integración de este con el modelo \Gls{xml} del robot y 
         entrenamiento y pruebas de los modelos desarrollados. Funciona como paso previo a trasladar el sistema a un robot real, a modo de 
         testeo de sus funcionalidades y viabilidad.
         
@@ -256,8 +256,7 @@ riesgos y limitaciones, y especificando las tecnologías necesarias.
 
         \item \textbf{Eficiencia computacional}:
         El entrenamiento de los modelos deberá presentar un coste computacional razonable para los recursos disponibles y los experimentos deberán poder completarse en 
-        un tiempo asequible. Esto quiere decir, deberá poder ejecutarse con un hardware similar al utilizado por el alumno y en un 
-        tiempo (no tengo muy claro cómo poner esto).
+        un tiempo asequible.
 
         \item \textbf{Trazabilidad}:  
         El sistema deberá permitir guardar y consultar posteriormente los datos obtenidos de las pruebas realizadas, con el fin de comparar y evaluar los 
@@ -307,7 +306,7 @@ riesgos y limitaciones, y especificando las tecnologías necesarias.
     \endlastfoot
 
     R1 &
-    Problemas en entrenamiento en simulación (Falta de funciones de alto nivel, integración con MuJoCo) &
+    Problemas en entrenamiento en simulación (falta de funciones de alto nivel, integración con MuJoCo) &
     A & A &
     Retraso importante o eliminación de la parte de simulación &
     Priorizar un modelo simple de locomoción, reutilizar entornos ya existentes, establecer un criterio de parada en caso de consumir demasiado tiempo en esta fase, descartar el entrenamiento en simulación y trabajar únicamente con el robot real. \\
@@ -342,17 +341,17 @@ riesgos y limitaciones, y especificando las tecnologías necesarias.
     \hline
 
     R6 &
-    Problemas con los datos para entrenamiento (Datos insuficientes o poca diversidad) &
+    Problemas con los datos para entrenamiento (datos insuficientes o poca diversidad) &
     M & M &
     Sobreajuste, mala generalización, modelos mal entrenados &
     Validación con modelos parciales, criterios mínimos de cantidad y calidad, realizar pruebas con distintas posiciones de robot/objetivo, incrementar el muestreo, reutilizar conjuntos de datos de modelos previos. \\
     \hline
 
     R7 &
-    Problemas en el entrenamiento (arquitectura de la red de neuronas, hiperparametros, no convergencia de los modelos, etc) &
+    Problemas en el entrenamiento (arquitectura de la red de neuronas, hiperparámetros, no convergencia de los modelos, etc) &
     M & M &
     Retrasos entrenando los modelos, resultados no concluyentes &
-    Comenzar con modelos simples e ir aumentando progresivamente, normalizar entradas y salidas, early stopping, métricas eficientes, ajustar los hiperparametros (fine tunning). \\
+    Comenzar con modelos simples e ir aumentando progresivamente, normalizar entradas y salidas, early stopping, métricas eficientes, ajustar los hiperparámetros. \\
     \hline
 
     R8 &
@@ -370,21 +369,21 @@ riesgos y limitaciones, y especificando las tecnologías necesarias.
     \hline
 
     R10 &
-    Riesgo de daño del material durante las pruebas del robot (Caidas, golpes, etc) &
+    Riesgo de daño del material durante las pruebas del robot (caidas, golpes, etc) &
     M & A &
     Daño del robot, interrupción del proyecto &
     Entorno de pruebas despejado y seguro, limite de velocidad para el robot, delimitación clara de los límites seguros, programar parada de emergencia en los scripts de compilación de datos y de validación de entrenamiento, supervisión de las ejecuciones. \\
     \hline
 
     R11 &
-    Problemas con el software (Fallos de configuración, errores en el código) &
+    Problemas con el software (fallos de configuración, errores en el código) &
     M & M &
     Retraso y pérdida de resultados &
     Control de versiones mediante Github, pruebas sencillas en los componentes claves (Motive y NatNet, SDK del robot). \\
     \hline
 
     R12 &
-    Dependencia de disponibilidad del laboratorio o los recursos (robot, cámaras) &
+    Dependencia de disponibilidad del laboratorio o de los recursos (robot, cámaras) &
     B & B &
     Tiempo para realizar pruebas reducido y retrasos en la validación de los modelos &
     Planificar sesiones con antelación, prioridad al trabajo en remoto, priorizar pruebas críticas, organización del trabajo con otros usuarios del laboratorio. \\
@@ -501,18 +500,18 @@ a los materiales necesarios para llevarlo a cabo:
         medio se encuentra alrededor de los 20.000€ en España (según el portal de empleo 
         Jobted\footnote{\url{https://www.jobted.es/salario/ingeniero-inform\%C3\%A1tico}}).
         \item Martín Naya Varela, con el cargo de ayudante doctor (A-LOSU) para la Universidad de La Coruña, con un salario anual de 
-        33.092,08€ (Segun los datos aportados por la pagina oficial de la UDC\footnotemark).
+        33.092,08€ (según los datos aportados por la pagina oficial de la UDC\footnotemark).
         \item Alejandro Romero Montero, también con el cargo de ayudante doctor (A-LOSU) para la Universidad de la Coruña, con un salario anual 
-        de 33.092,08€ (Segun los datos aportados por la pagina oficial de la UDC\footnotemark[\value{footnote}]).
+        de 33.092,08€ (según los datos aportados por la pagina oficial de la UDC\footnotemark[\value{footnote}]).
         \footnotetext{\url{https://www.udc.es/export/sites/udc/goberno/_galeria_down/xerencia/servizos/retribucions_seguridade_social_e_accion_social/taboas_retributivas/taboas2026/pdi-lab.pdf_2063069294.pdf}}
     \end{itemize}
     
     \item \textbf{Coste material}:
     
     \begin{itemize}
-        \item Robot Unitree Go2 EDU PLUS (14520€).
-        \item Sistema de cámaras Optitrack con el software Motive (8 cámaras x 1500€ y el software 1000€).
-        \item Estructura de soporte para el sistema optitrack, el rack y los soportes para las cámaras (7000€).
+        \item Robot Unitree Go2 EDU PLUS (14.520€).
+        \item Sistema de cámaras Optitrack con el software Motive (8 cámaras x 1.500€ y el software 1.000€).
+        \item Estructura de soporte para el sistema optitrack, el rack y los soportes para las cámaras (7.  000€).
         \item Intel NUC (500€).
     \end{itemize}
 
