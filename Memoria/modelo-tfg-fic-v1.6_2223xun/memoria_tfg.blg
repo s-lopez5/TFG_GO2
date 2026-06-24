@@ -1,0 +1,70 @@
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: memoria_tfg.aux
+A level-1 auxiliary file: portada/portada.aux
+A level-1 auxiliary file: portada/resumo.aux
+A level-1 auxiliary file: contido/introducion.aux
+A level-1 auxiliary file: contido/FundamentosTecnologicos.aux
+A level-1 auxiliary file: contido/MetodologiaPlanificacion.aux
+A level-1 auxiliary file: contido/Diseño.aux
+A level-1 auxiliary file: contido/Desarrollo.aux
+A level-1 auxiliary file: contido/conclusions.aux
+The style file: IEEEtranN.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: bibliografia/bibconf-es.bib
+Database file #2: bibliografia/bibliografia.bib
+-- IEEEtranN.bst version 1.14 (2015/08/26) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+** Natbib version - not for normal IEEE work.
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+** IEEEtran BST control entry "IEEEexample:BSTcontrol" detected.
+
+Done.
+You've used 28 entries,
+            4855 wiz_defined-function locations,
+            1102 strings with 11806 characters,
+and the built_in function-call counts, 16754 in all, are:
+= -- 1596
+> -- 324
+< -- 55
++ -- 173
+- -- 82
+* -- 901
+:= -- 2903
+add.period$ -- 56
+call.type$ -- 28
+change.case$ -- 75
+chr.to.int$ -- 102
+cite$ -- 28
+duplicate$ -- 1162
+empty$ -- 1274
+format.name$ -- 116
+if$ -- 3604
+int.to.chr$ -- 4
+int.to.str$ -- 29
+missing$ -- 224
+newline$ -- 147
+num.names$ -- 81
+pop$ -- 690
+preamble$ -- 1
+purify$ -- 27
+quote$ -- 4
+skip$ -- 1210
+stack$ -- 0
+substring$ -- 307
+swap$ -- 695
+text.length$ -- 6
+text.prefix$ -- 0
+top$ -- 7
+type$ -- 414
+warning$ -- 0
+while$ -- 66
+width$ -- 0
+write$ -- 363

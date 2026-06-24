@@ -1,0 +1,50 @@
+\xpginauxfiletrue 
+\selectlanguage *{spanish}
+\selectlanguage *{english}
+\selectlanguage *[variant=spanish,spanishoperators=none]{spanish}
+\selectlanguage *{spanish}
+\contentsline {chapter}{\numberline {1}Introdución}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Motivación}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Objetivos}{2}{section.1.2}%
+\contentsline {chapter}{\numberline {2}Fundamentos tecnológicos}{4}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Estado del arte}{4}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Tecnologías empleadas}{6}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Entorno Python}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Entorno Optitrack}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Entorno del robot}{14}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Entorno MuJoCo}{15}{subsection.2.2.4}%
+\contentsline {chapter}{\numberline {3}Metodología y planificación}{17}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Metodología de desarrollo}{17}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Iteraciones de la metodología en el proyecto}{18}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Herramientas de apoyo a la metodología}{19}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Planificación y seguimiento}{20}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Planificación inicial}{20}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Recursos humanos}{27}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Recursos técnicos}{28}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Costes}{29}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}Desviaciones en la planificación}{30}{subsection.3.2.5}%
+\contentsline {chapter}{\numberline {4}Diseño}{33}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Arquitectura del sistema}{33}{section.4.1}%
+\contentsline {chapter}{\numberline {5}Desarrollo}{35}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Desarrollo en simulación}{35}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Configuración de MuJoCo}{35}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Problemas durante la implementación}{41}{subsection.5.1.2}%
+\contentsline {section}{\numberline {5.2}Desarrollo en robot cuadrúpedo}{42}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Configuración del sistema Optitrack}{43}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Configuración del robot Unitree Go2}{46}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Modelo de mundo}{47}{subsection.5.2.3}%
+\contentsline {subsubsection}{Obtención de datos para el modelo de mundo}{49}{subsubsection*.20}%
+\contentsline {subsubsection}{Entrenamiento del modelo de mundo}{50}{subsubsection*.21}%
+\contentsline {subsection}{\numberline {5.2.4}Modelo de utilidad}{52}{subsection.5.2.4}%
+\contentsline {subsubsection}{Obtención de datos para el modelo de utilidad}{53}{subsubsection*.24}%
+\contentsline {subsubsection}{Entrenamiento del modelo de utilidad}{55}{subsubsection*.25}%
+\contentsline {subsection}{\numberline {5.2.5}Demostración del sistema deliberativo}{58}{subsection.5.2.5}%
+\contentsline {subsection}{\numberline {5.2.6}Independencia entre modelos}{59}{subsection.5.2.6}%
+\contentsline {subsubsection}{Mismo modelo de mundo, diferente modelo de utilidad}{61}{subsubsection*.32}%
+\contentsline {subsubsection}{Diferente modelo de mundo, mismo modelo de utilidad}{63}{subsubsection*.37}%
+\contentsline {chapter}{\numberline {6}Conclusiones}{70}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Alcance de los objetivos}{70}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Lecciones aprendidas}{72}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Trabajo futuro}{72}{section.6.3}%
+\contentsline {chapter}{Glosario}{75}{section*.42}%
+\contentsline {chapter}{Bibliografía}{77}{chapter*.44}%

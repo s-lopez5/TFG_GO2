@@ -67,9 +67,7 @@ y las variaciones en la posición de los objetos del entorno.
     <include file="go2.xml"/>
     <include file="model_box.xml"/>
 
-
     <statistic center="0 0 0.1" extent="0.8"/>
-
 
     <visual>
       <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
@@ -77,14 +75,12 @@ y las variaciones en la posición de los objetos del entorno.
       <global azimuth="-130" elevation="-20"/>
     </visual>
 
-
     <asset>
       <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
       <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
       markrgb="0.8 0.8 0.8" width="300" height="300"/>
       <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
     </asset>
-
 
     <worldbody>
       <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
@@ -196,13 +192,10 @@ Durante una iteración se llevan a cabo los siguientes pasos:
 
 \begin{lstlisting}[language=Python]
 with mujoco.viewer.launch_passive(model, data) as viewer:
-
-
   # Colocar el robot en la posicion por defect
   data.qpos[:] = model.key_qpos
   mj.mj_step(model, data)
   viewer.sync()  
-
 
   for episode in range(num_episodes):
     
@@ -214,12 +207,10 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
           mj.mj_step(model, data) # Avanza la simulacion
           obs_t1 = get_obs(data) # Obtenemos las observaciones en T+1
 
-
           # Guardar datos
           boxPos = np.copy(get_box_pos(data, box_id))
           datos_entrada = np.concat([np.concat([obs_t, boxPos]), action])
           trainnig_data.append((datos_entrada, np.concat([obs_t1, boxPos])))
-
 
           viewer.sync()   # Actualiza la visualizacion
         
@@ -228,7 +219,6 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
           if robot_height < 0.1:  # Si la altura es menor a un umbral, el robot esta caido
               print("Simulacion detenida por caida de robot en iteracion", iteration)
               break
-
 
       # Reiniciar la simulación al final de cada iteración
       data.qpos[:] = model.key_qpos
@@ -361,17 +351,6 @@ clase que le da nombre, “NatNetClient”, así como los atributos y métodos n
 
 \end{itemize}
 
-\begin{lstlisting}[language=Python]
-  #Getter para obtener la ultima posicion recibida
-   def get_last_pos(self):
-       return self.last_pos
-
-
-   #Getter para obtener la posicion objetivo
-   def get_objetive_pos(self):
-       return self.obj_pos
-\end{lstlisting}
-
 Por último, en el método “\textit{\_\_process\_message}”, encargado de tratar los mensajes enviados con Motive, se añadió la función de filtrar la información enviada a través del nombre de los 
 \gls{markerset}. De esta manera se permitía acceder a la posición de cada uno de los objetos por separado, con el fin de tratar cada una de manera independiente. En el caso del robot, la 
 posición se guardó sin cambios para ser modificada en el \gls{script} principal. En cuanto a la posición del objetivo, se simplificó calculando el punto medio de los tres marcadores en lugar de 
@@ -381,30 +360,19 @@ guardar toda la información, ya que únicamente necesitamos un punto con el que
   if message_id == self.NAT_FRAMEOFDATA:
            trace("Message ID : %3.1d NAT_FRAMEOFDATA" % message_id)
            trace("Packet Size: ", packet_size)
-
-
            offset_tmp, mocap_data = self.__unpack_mocap_data(data[offset:], packet_size, major, minor) #type: ignore  # noqa E501
            offset += offset_tmp
           
            if print_level >= 1:
                self.last_pos = []
-
-
                #Obtener datos de los markers
                if mocap_data.marker_set_data:
                    for i, marker_data in enumerate(mocap_data.marker_set_data.marker_data_list):
                        if marker_data.model_name.decode('utf-8') == "Objetivo2":
-
-
                            x1, y1, z1 = marker_data.marker_pos_list[0]
                            x2, y2, z2 = marker_data.marker_pos_list[1]
                            x3, y3, z3 = marker_data.marker_pos_list[2]
-
-
                            self.obj_pos = [(x1 + x2 + x3) / 3, y1, (z1 + z2 + z3) / 3]
-
-
-
 
                        elif marker_data.model_name.decode('utf-8') == "Go2":
                            self.last_pos = marker_data.marker_pos_list
@@ -586,7 +554,7 @@ ejecutar una acción.
 
 \begin{figure}[hp!]
   \centering
-  \includegraphics[width=\textwidth]{imaxes/WM/WM_predicciones.png}
+  \includegraphics[width=0.75\textwidth]{imaxes/WM/WM_predicciones.png}
   \caption{Predicciones del modelo de mundo.}
   \label{fig:WM_predicciones}
 \end{figure}
@@ -880,7 +848,7 @@ nueva meta.
 
 \begin{figure}[hp!]
   \centering
-  \includegraphics[width=\textwidth]{imaxes/BrazoRobot/UM_prediction_example_100_inverso.png}
+  \includegraphics[width=0.75\textwidth]{imaxes/BrazoRobot/UM_prediction_example_100_inverso.png}
   \caption{Predicciones del modelo de utilidad inverso.}
   \label{fig:UM_predicciones_100_inverso}
 \end{figure}
@@ -891,7 +859,7 @@ estable durante la validación.
 
 \begin{figure}[hp!]
   \centering
-  \includegraphics[width=\textwidth]{imaxes/BrazoRobot/UM_training_history_100_inverso.png}
+  \includegraphics[width=0.75\textwidth]{imaxes/BrazoRobot/UM_training_history_100_inverso.png}
   \caption{Historial de entrenamiento del modelo de utilidad inverso.}
   \label{fig:UM_training_history_100_inverso}
 \end{figure}
@@ -1043,7 +1011,7 @@ primeras épocas y una estabilización posterior, indicando que el modelo aprend
 
 \begin{figure}[hp!]
   \centering
-  \includegraphics[width=\textwidth]{imaxes/BrazoRobot/WM_Brazo_training_metrics.png}
+  \includegraphics[width=0.75\textwidth]{imaxes/BrazoRobot/WM_Brazo_training_metrics.png}
   \caption{Historial de entrenamiento del modelo de mundo para el brazo robot.}
   \label{fig:brazorobot_WM_training_history}
 \end{figure}
@@ -1055,7 +1023,7 @@ se puede considerar razonable, debido a que el ángulo puede variar de forma má
 
 \begin{figure}[hp!]
   \centering
-  \includegraphics[width=\textwidth]{imaxes/BrazoRobot/WM_Brazo_Predicciones.png}
+  \includegraphics[width=0.75\textwidth]{imaxes/BrazoRobot/WM_Brazo_Predicciones.png}
   \caption{Predicciones del modelo de mundo para el brazo robot.}
   \label{fig:brazorobot_WM_predictions}
 \end{figure}
