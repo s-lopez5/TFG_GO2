@@ -1,9 +1,100 @@
-\chapter{Conclusións}
-\label{chap:conclusions}
+\chapter{Conclusiones}
+\label{chap:conclusiones}
 
-\lettrine{D}{erradeiro} capítulo da memoria, onde se presentará a
-situación final do traballo, as leccións aprendidas, a relación coas
-competencias da titulación en xeral e a mención en particular,
-posibles liñas futuras,\dots
+\lettrine{E}ste trabajo persiguió el desarrollo de un sistema deliberativo de toma de decisiones para un robot cuadrúpedo, basado en modelos de mundo y de utilidad, que tenía como objetivo que este 
+sistema fuese capaz de aprender a partir de la experiencia y utilizar este conocimiento para interactuar con el entorno. Para lograrlo, fue necesario integrar conocimientos de distintas 
+áreas, como el aprendizaje automático, la robótica, la captura de movimiento y el desarrollo de software. Además requirió trabajar con un amplio conjunto de tecnologías, entre ellas: Python, 
+TensorFlow, el SDK del robot Unitree Go2, Optitrack con su software Motive y NatNet, y MuJoCo.
 
-\Blindtext
+El resultado principal del proyecto fue la creación de un sistema funcional capaz de obtener observaciones del robot y del objetivo, generar datos para el entrenamiento, entrenar los modelos 
+de mundo y de utilidad, y utilizar ambos en conjunto para cumplir una meta concreta. En este sentido, puede considerarse que la idea central de este trabajo se desarrolló satisfactoriamente: 
+utilizar un modelo de mundo para anticipar las consecuencias de las distintas acciones y un modelo de utilidad para valorar dichas consecuencias antes de actuar.
+
+\section{Alcance de los objetivos}
+\label{sec:alcance_objetivos}
+
+En relación con los objetivos planteados al comienzo de la memoria, estos fueron completados en su mayoría de manera satisfactoria, especialmente el objetivo principal.
+
+\begin{itemize}
+  
+  \item El primer objetivo específico consistía en aprender de manera autónoma un modelo de mundo capaz de predecir las percepciones futuras a partir del estado actual y de la acción 
+  aplicada. Este objetivo puede considerarse cumplido, ya que se consiguió obtener un conjunto de datos de entrenamiento en el entorno real y entrenar con él un modelo predictivo que 
+  representa la dinámica del entorno.
+
+  \item El segundo objetivo consistía en aprender autónomamente un modelo de utilidad que evaluará la utilidad de los estados del entorno con respecto a una meta determinada. Este objetivo 
+  también puede darse por completado, ya que se logró construir un conjunto de datos en el entorno real con el que entrenar un modelo capaz de evaluar las observaciones de dicho conjunto y 
+  asignarles un valor de utilidad. Este resultado, en conjunto con el modelo de mundo, permitió completar el sistema deliberativo buscado en este trabajo.
+
+  \item El tercer objetivo buscaba implementar este aprendizaje automático en un entorno simulado mediante MuJoCo. Este objetivo finalmente no pudo completarse. Tal y como se explica en el 
+  apartado \ref{sec:desarrollo_problema_simulacion} (página \pageref{sec:desarrollo_problema_simulacion}), durante esta fase se encontraron dificultades técnicas importantes, principalmente 
+  relacionadas con el control de movimiento del robot. Debido a ello, esta parte del proyecto tuvo que cancelarse para evitar estancarse en una tarea secundaria respecto al objetivo último 
+  del trabajo.
+
+  \item El cuarto objetivo consistía en transferir los modelos desde la simulación a un entorno real en el que se utilizaba el robot Go2 y el sistema de cámaras Optitrack. Este objetivo se 
+  alcanzó de manera parcial, ya que finalmente no se realizó ninguna transferencia desde simulación, al no haber completado la fase simulada. Sin embargo, sí que se consiguió desarrollar 
+  satisfactoriamente el sistema planteado directamente en el entorno real. Por tanto, aunque no se produjo esta transferencia planteada inicialmente, si que se logró la meta principal de 
+  esta parte: obtener los modelos así como el sistema deliberativo operativos en el entorno real.
+
+  \item El quinto objetivo trataba de validar, comparar y analizar los resultados obtenidos tanto en el entorno simulado como en el entorno real. Este objetivo quedó también cumplido de manera 
+  parcial. Se validaron y analizaron los resultados obtenidos en el entorno simulado, pero no fue posible realizarlo con los resultados del entorno simulado debido a su cancelación. Aun así, la 
+  validación realizada permitió comprobar la viabilidad del enfoque y obtener conclusiones útiles sobre el comportamiento del sistema y el procedimiento seguido.
+
+  \item Finalmente, el último objetivo, que consistía en analizar y validar la independencia entre modelos de mundo y de utilidad, puede considerarse cumplido. La propia estructura del sistema 
+  desarrollado, separando la predicción de la evaluación, permitió demostrar que ambos modelos podían entrenarse y utilizarse como componentes independientes, así como intercambiarlos por otros 
+  compatibles con sus entradas y salidas. Esta separación constituye uno de los aspectos más interesantes del trabajo realizado.
+
+\end{itemize}
+
+En resumen, los objetivos que fueron desarrollados con éxito fueron los siguientes: aprendizaje del modelo de mundo, aprendizaje del modelo de utilidad, desarrollo del sistema en el entorno real 
+y validación de la independencia entre modelos. Los objetivos que quedaron pendientes fueron la implementación del sistema en simulación y, por consiguiente, la transferencia de este al 
+robot real.
+
+
+\section{Lecciones aprendidas}
+\label{sec:lecciones_aprendidas}
+
+Uno de los aspectos más destacables del proyecto fue precisamente el aprendizaje adquirido durante el desarrollo de este. El trabajo exigió utilizar tecnologias muy diferentes entre sí y 
+combinarlas en un mismo sistema: desde el control de un robot Unitree Go2 mediante su SDK de Python, hasta la configuración del sistema de cámaras de captura de movimiento y la transmisión 
+por red, pasando por el entrenamiento de modelos mediante aprendizaje supervisado con TensorFlow. En este sentido, el proyecto ha servido como una demostración de la capacidad de aprender 
+conocimientos nuevos de distintas disciplinas e integrarlos para resolver un problema de robótica autónoma.
+
+También se ha visto la importancia de la planificación en proyectos de carácter experimental. La metodología iterativa incremental empleada resultó la adecuada para este proyecto, ya que permitió 
+detectar a tiempo los problemas surgidos, replantear las prioridades y reorientar el desarrollo permitiendo finalizar el trabajo con éxito. Esto se comprobó al detectar que insistir en la 
+simulación desviaba en exceso el trabajo del objetivo principal.
+
+Referente a lo anterior, durante el desarrollo ocurrieron dos grandes incidencias ya mencionadas anteriormente: la imposibilidad de completar la fase de simulación en MuJoCo y el retraso en la 
+puesta a punto del sistema Optitrack y la transmisión de datos entre NatNet y Motive. Ambas incidencias afectaron de manera importante a la planificación inicial, pero también sirvieron para 
+delimitar de manera más realista el alcance del proyecto.
+
+Otra lección importante fue que, en proyectos de este estilo, la calidad de la infraestructura de adquisición de datos es tan importante como el propio modelo de aprendizaje. Sin un sistema de 
+captura de movimiento suficientemente preciso y fiable, el entrenamiento de los modelos no habría sido posible. Esto corresponde con la idea de que en la robótica el aprendizaje automático no 
+puede entenderse de forma aislada, sino relacionado con el problema de la percepción, el control e integración de los sistemas.
+
+
+\section{Trabajo futuro}
+\label{sec:trabajo_futuro}
+
+A partir de este punto se abren varias líneas de mejora con las que se podría continuar este trabajo:
+
+La primera consiste en continuar con la parte de simulación, buscando alternativas que permitan el control del robot de manera más sencilla dentro de MuJoCo. Para abordar esto podría retomarse 
+el aprendizaje del sistema de movimiento que se intentó realizar para este proyecto, o bien crear las funciones de movimiento de bajo nivel e implementarlas para la simulación. Completar esta 
+fase permitiría recuperar uno de los objetivos previstos inicialmente, lo que facilitaría y reduciría el tiempo necesario para crear y testear los modelos.
+
+Una segunda línea de trabajo sería ampliar el sistema a un conjunto mayor de entornos y objetivos. Para este proyecto se ha trabajado en un escenario concreto relacionado con la posición 
+relativa del robot con respecto a un objetivo. Sin embargo, este mismo enfoque podría extenderse a otras metas, como evitar ciertos obstáculos, seguir trayectorias o buscar distintos 
+objetivos. Esto permitiría explorar más en profundidad las ventajas del uso de modelos de utilidad: la posibilidad de aprender distintos modelos de utilidad con el mismo conocimiento del 
+entorno. Esto mismo también es aplicable a la inversa, es decir, reutilizar un mismo criterio de valoración con distintos modelos de mundo.
+
+Otra línea de mejora consistiría en aumentar la complejidad de las observaciones empleadas por el sistema. Este trabajo se realizó utilizando el sistema Optitrack con tres marcadores para cada 
+objeto, pero en un futuro podría ampliarse el número de marcadores para obtener datos más detallados del movimiento del robot. Así mismo, también podría incorporarse la información procedente 
+de los sensores del robot, como el LiDAR, la IMU o las cámaras integradas. Esto permitiría aumentar la complejidad que podrían asumir los modelos, así como acercar el sistema a entornos más 
+realistas y a objetivos más complejos. 
+
+Otra mejora posible sería profundizar en la evaluación cuantitativa de los modelos. Para esta memoria se analizaron sus resultados y se representaron sus historiales de entrenamiento y 
+predicciones en gráficos (como se ve en el capítulo \ref{chap:desarrollo}), sin embargo, una futura ampliación podría incluir el uso de métricas más complejas y pruebas más extensas 
+para validar los modelos. 
+
+Aunque menos relevante que las anteriores, otra mejora a tener en cuenta sería añadir una interfaz gráfica a la simulación del brazo robótico que se realizó a la hora de demostrar la 
+independencia entre modelo en el apartado \ref{sec:desarrollo_indep_mod}. Si bien no afectaría a los resultados obtenidos, sí que supondría una ayuda a la hora de 
+visualizarlos de manera más fácil.
+

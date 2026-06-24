@@ -4,16 +4,18 @@ The top-level auxiliary file: memoria_tfg.aux
 A level-1 auxiliary file: portada/portada.aux
 A level-1 auxiliary file: portada/resumo.aux
 A level-1 auxiliary file: contido/introducion.aux
-A level-1 auxiliary file: contido/demo.aux
+A level-1 auxiliary file: contido/FundamentosTecnologicos.aux
+A level-1 auxiliary file: contido/MetodologiaPlanificacion.aux
+A level-1 auxiliary file: contido/Diseño.aux
+A level-1 auxiliary file: contido/Desarrollo.aux
 A level-1 auxiliary file: contido/conclusions.aux
-A level-1 auxiliary file: anexos/adicional.aux
 The style file: IEEEtranN.bst
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-Database file #1: bibliografia/bibconf-gl.bib
+Database file #1: bibliografia/bibconf-es.bib
 Database file #2: bibliografia/bibliografia.bib
 -- IEEEtranN.bst version 1.14 (2015/08/26) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
@@ -25,44 +27,44 @@ Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 ** IEEEtran BST control entry "IEEEexample:BSTcontrol" detected.
 
 Done.
-You've used 3 entries,
+You've used 28 entries,
             4855 wiz_defined-function locations,
-            969 strings with 8641 characters,
-and the built_in function-call counts, 1334 in all, are:
-= -- 97
-> -- 33
-< -- 3
-+ -- 14
-- -- 8
-* -- 91
-:= -- 227
-add.period$ -- 4
-call.type$ -- 3
-change.case$ -- 5
-chr.to.int$ -- 8
-cite$ -- 3
-duplicate$ -- 86
-empty$ -- 114
-format.name$ -- 11
-if$ -- 272
-int.to.chr$ -- 1
-int.to.str$ -- 4
-missing$ -- 16
-newline$ -- 32
-num.names$ -- 6
-pop$ -- 52
+            1102 strings with 11806 characters,
+and the built_in function-call counts, 16754 in all, are:
+= -- 1596
+> -- 324
+< -- 55
++ -- 173
+- -- 82
+* -- 901
+:= -- 2903
+add.period$ -- 56
+call.type$ -- 28
+change.case$ -- 75
+chr.to.int$ -- 102
+cite$ -- 28
+duplicate$ -- 1162
+empty$ -- 1274
+format.name$ -- 116
+if$ -- 3604
+int.to.chr$ -- 4
+int.to.str$ -- 29
+missing$ -- 224
+newline$ -- 147
+num.names$ -- 81
+pop$ -- 690
 preamble$ -- 1
-purify$ -- 2
+purify$ -- 27
 quote$ -- 4
-skip$ -- 95
+skip$ -- 1210
 stack$ -- 0
-substring$ -- 15
-swap$ -- 44
-text.length$ -- 0
+substring$ -- 307
+swap$ -- 695
+text.length$ -- 6
 text.prefix$ -- 0
 top$ -- 7
-type$ -- 26
+type$ -- 414
 warning$ -- 0
-while$ -- 5
+while$ -- 66
 width$ -- 0
-write$ -- 45
+write$ -- 363

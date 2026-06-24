@@ -1,0 +1,605 @@
+\chapter{Metodología y planificación}
+\label{chap:metodologia_planificacion}
+
+\section{Metodología de desarrollo}
+\label{sec:metodologia_desarrollo}
+
+Se decidió emplear una metodología iterativa incremental por lo bien que se adapta tanto a los 
+proyectos de este tipo como a la disponibilidad con la que contaban tanto los tutores como el alumno. 
+
+Esta estrategia busca dividir el proyecto en varios bloques conocidos como iteraciones. Cada 
+iteración deberá ir aumentando poco a poco las funcionalidades y la complejidad del sistema 
+hasta darlo por finalizado. Además, cada iteración, en concreto las dedicadas al desarrollo, 
+permite recorrer de forma cíclica las distintas fases de un ciclo de vida tradicional: análisis, 
+diseño, implementación y prueba.
+
+Este esquema de trabajo basado en iteraciones se adapta a la perfección con la asistencia al CITIC (Centro de Investigación en 
+Tecnologías de la Información y las Comunicaciones) planeada inicialmente. Trabajar de manera presencial en el laboratorio de robótica 
+del centro tres veces por semana facilitaba al alumno reunirse frecuentemente con sus tutores y comunicar los avances con ellos.
+Aunque inicialmente estaba previsto mantener reuniones periódicas cada 15 días o menos en función de la complejidad de cada tarea, al 
+tener el alumno disponibilidad casi total de asistencia, y el tutor estar también disponible, no se llevaron a cabo estas reuniones, sino 
+que, en su lugar, se realizó un seguimiento dia a dia en el laboratorio de robótica. Este seguimiento diario permitió detectar, tanto durante el 
+planteamiento como durante el desarrollo, fallos y mejoras a implementar, así como la necesidad de retrasar o reducir partes del proyecto.
+
+Otro punto importante para seleccionar esta metodología es la propia naturaleza del proyecto. Al tratarse 
+de un trabajo de investigación, especialmente uno que trata sobre aprendizaje automático como este, presenta 
+numerosos riesgos (tratados más adelante en la sección \ref{sec:planificacion_inicial}, página \pageref{sec:planificacion_inicial}) 
+que podrían dificultar o impedir la realización de parte del trabajo. Este enfoque permite subdividir 
+las tareas complejas en unas más sencillas y asequibles. 
+
+Destacar que, gracias a aplicar en cada iteración este ciclo de vida mencionado anteriormente, permitió ir 
+obteniendo resultados parciales funcionales y evaluables a lo largo de las etapas antes de finalizar el 
+proyecto. Esto fue especialmente útil para el caso de la cancelación de la simulación con MuJoCo y de los problemas 
+ocurridos con el entorno Optitrack, como se verá más adelante.
+
+Como último aspecto a favor de esta metodología, cabe destacar que el proyecto implicó el trabajo con numerosas tecnologías 
+y conocimientos técnicos que, en primer momento, resultaban desconocidos para el alumno. La puesta a punto del sistema Optitrack, 
+del que se disponía del hardware necesario pero cuyo software para la transferencia de datos entre equipos no se había utilizado 
+previamente, así como el uso del robot Go2 mediante su \gls{sdk} de Python, también desconocido hasta ese momento, requirieron 
+un período de adaptación. A ello se sumó la necesidad de familiarizarse con las distintas librerías empleadas para interconectar 
+ambos sistemas y para entrenar el modelo, así como con fundamentos teóricos que no se habían visto con anterioridad, como los 
+modelos de mundo y de utilidad, o el aprendizaje automático, tratado de forma introductoria a lo largo de la carrera.
+
+Al subdividir el problema global en tareas concretas enfocadas en tecnologías individuales permiten al alumno familiarizarse 
+con cada una de ellas e ir conectándolas a lo largo del proyecto. Además, la cercanía con los tutores gracias a la presencialidad 
+facilita la resolución de posibles dudas o problemas que se vayan presentando durante el desarrollo.
+
+
+
+\subsection{Iteraciones de la metodología en el proyecto}
+\label{sec:iteraciones_metodologia}
+
+Tal como se indicó en el punto anterior, el desarrollo del proyecto se llevó a cabo siguiendo una metodología 
+iterativa incremental, con el fin de dividir el trabajo en iteraciones que daban como resultado entregables parciales. 
+En cada una se recorrieron de forma cíclica las distintas fases de ciclo de vida adaptadas para el correcto 
+desenvolvimiento de este trabajo:
+
+\begin{itemize}
+    \item \textbf{Análisis}:
+    Durante esta fase se definieron los objetivos y el alcance previsto en cada iteración, determinando qué funcionalidades 
+    se implementarían a lo largo de esta. Se trataron los requisitos técnicos necesarios para su realización así como 
+    las especificaciones, y se analizaron los posibles riesgos y sus contramedidas. Además, durante esta fase se tuvieron 
+    en cuenta retrasos o problemas surgidos durante iteraciones anteriores permitiendo buscar soluciones para mitigarlos o 
+    incluso replantear el enfoque en caso de no obtener resultados satisfactorios.
+
+    \item \textbf{Configuración del entorno y formación en las tecnologías}:
+    En esta fase, tras haber decidido el objetivo de la iteración, se preparó el entorno y las herramientas necesarias para 
+    llevar a cabo la tarea. En base a este objetivo, se realizaron tareas como: configuración del robot Go2 y su conectividad, 
+    puesta a punto del sistema de cámaras Optitrack, transferencia de datos entre ordenadores y la creación del entorno de simulación 
+    en MuJoCo.
+    Asimismo, esta fase permitió al alumno familiarizarse con las nuevas tecnologías y términos necesarios para abordar el desarrollo 
+    de cada funcionalidad.
+
+    \item \textbf{Desarrollo}:
+    Una vez completadas las fases previas, se procedió a implementar las funcionalidades correspondientes a cada iteración. Los principales objetivos a 
+    desarrollar fueron la creación de los scripts para recopilación, almacenamiento y procesamiento de los datos sobre las observaciones que se usarían 
+    para entrenar los modelos. Además de implementar los que se utilizarían para controlar el robot, para el entrenamiento de los distintos modelos 
+    deliberativos y para obtener las métricas y crear las gráficas con las que analizar los resultados de las experimentaciones realizadas. El conjunto de 
+    todas estas funcionalidades terminaron llevando a la creación de un sistema de toma de decisiones basado en un modelo de mundo y de utilidad que 
+    permite al robot moverse y cumplir objetivos.
+
+    \item \textbf{Pruebas}:
+    Al final de cada iteración se realizó una fase de pruebas para verificar si los objetivos definidos durante la fase de análisis se 
+    cumplieron de manera satisfactoria. Estas verificaciones pasan desde pruebas básicas, como verificar la conexión entre Motive y 
+    NatNet, hasta algunas más complejas orientadas a los resultados, como la eficacia de los distintos modelos entrenados. En caso de no 
+    cumplirse los estándares esperados o de detectar problemas en la realización, estos se anotarán y se analizarían durante la fase 
+    correspondiente de la siguiente iteración para realizar las modificaciones pertinentes.
+
+\end{itemize}
+
+Como conclusión, esta metodología permitió obtener resultados parciales evaluables según avanzaba el proyecto y corregir el rumbo 
+cuando surgieron situaciones o problemas que dificultaron el avance del trabajo (Como se puede observar en la sección \ref{sec:desviaciones_planificacion}, 
+página \pageref{sec:desviaciones_planificacion}).
+
+\subsection{Herramientas de apoyo a la metodología}
+\label{sec:herramientas_apoyo_metodologia}
+
+A continuación, se describen las herramientas empleadas a lo largo del proyecto, las cuales facilitaron tanto su organización y desarrollo 
+como la correcta aplicación de la metodología previamente expuesta.
+
+\begin{itemize}
+    \item \textbf{GitHub}\cite{GithubWeb}: GitHub es la plataforma de gestión de versiones, seleccionada para alojar y gestionar el código fuente de este 
+    proyecto. Entre sus ventajas destacan la posibilidad de mantener un historial de los avances, recuperar estados anteriores en caso de 
+    necesidad y facilitar la comunicación con los demás miembros del proyecto. Además fue especialmente relevante para la metodología utilizada, 
+    facilitando la estructuración de las distintas iteraciones y su posterior consulta a modo de índice al marcar la finalización de cada una 
+    con un \gls{commit} de los avances realizados.  Por norma general en la gestión de proyectos, suelen utilizarse los branches, ramas distintas a la 
+    rama “Master” dedicadas a una tarea en específico y que tras la finalización de esta se fusionan. Sin embargo, en este caso al tratarse de un proyecto 
+    personal no se siguió esta norma.
+
+    \item \textbf{Visual Studio Code}\cite{VSCodeWeb}: VS Code es un \Gls{ide} de código abierto ampliamente utilizado en desarrollo de software. 
+    Fue el seleccionado para llevar a cabo la implementación del proyecto por características como el soporte de depuración, ejecución de scripts 
+    o la integración con GitHub.
+
+    \item \textbf{Overleaf}\cite{OverleafWeb}: Overleaf es una plataforma en línea utilizada para la creación de documentos \LaTeX\cite{LatexWeb}.
+    Dispone de una versión gratuita, que fue empleada para redactar esta memoria. Gracias a esta herramienta, fue posible mantener una versión 
+    siempre actualizada del documento, lo que facilitó tanto la colaboración con los tutores como la revisión continua del texto.
+
+\end{itemize}
+
+
+\section{Planificación y seguimiento}
+\label{sec:planificacion_seguimiento}
+
+\subsection{Planificación inicial}
+\label{sec:planificacion_inicial}
+
+La planificación inicial comenzó con una reunión con los tutores para acordar la temática y los objetivos del proyecto, creando así el 
+anteproyecto para este TFG. En esta reunión se definieron los objetivos iniciales, tanto generales como específicos, así como la metodología 
+y estrategia diseñadas para alcanzarlos. Posteriormente, se procedió a realizar un planteamiento inicial sobre cómo abordar el trabajo, 
+realizando un análisis de las necesidades y la viabilidad, acotando el alcance y los requisitos funcionales, identificando los principales 
+riesgos y limitaciones, y especificando las tecnologías necesarias.
+
+\begin{itemize}
+    \item \textbf{Análisis de necesidades y viabilidad}
+
+    El objetivo principal del proyecto es disponer de un sistema que permita aprender modelos de mundo y de utilidad a partir de las experiencias del 
+    robot, conseguidas mediante la interacción de este con el mundo que lo rodea, para desarrollar un modelo deliberativo capaz de descubrir objetivos 
+    y conseguir alcanzarlos en un entorno real. 
+
+    En el caso concreto de este proyecto, el robot debe descubrir que tiene que aprender a acercarse a un determinado objetivo, y posteriormente, 
+    realizar el entrenamiento con los datos recopilados para alcanzar ese objetivo de manera consistente.
+
+    Se tuvieron en cuenta dos factores a la hora de evaluar la viabilidad:
+
+    \begin{itemize}
+        \item Viabilidad técnica: contar con los elementos necesarios para construir el sistema (robot Go2 y sistema Optitrack), así como las 
+        herramientas de desarrollo y los conocimientos requeridos para llevarlo a cabo (Python, Motive y los \Gls{sdk}s). Además, se dispuso del 
+        espacio de trabajo adecuado para la puesta a punto y el uso de estos recursos en el laboratorio de robótica del CITIC.
+
+        \item Viabilidad temporal: se contaba con la dedicación completa del alumno (en términos de tiempo) y con el seguimiento periodico de 
+        los tutores, junto con la aplicación de una metodología iterativa incremental, que permitió desarrollar el proyecto y corregir 
+        desviaciones respecto a la planificación inicial.
+
+    \end{itemize}
+
+    Tras tener estos puntos en cuenta, se concluyó que se trataba de un proyecto viable en el tiempo previsto.
+
+    \item \textbf{Análisis de alcance del proyecto}
+
+    El alcance inicial del proyecto se planteó en dos líneas:
+
+    \begin{itemize}
+        \item Desarrollo en entorno simulado (MuJoCo): creación del entorno, integración de este con el modelo \Gls{xml} del robot y 
+        entrenamiento y pruebas de los modelos desarrollados. Funciona como paso previo a trasladar el sistema a un robot real, a modo de 
+        testeo de sus funcionalidades y viabilidad.
+        
+        \item Desarrollo en entorno real: Configuración del entorno Optitrack, transmisión de datos en streaming, control de robot Go2 y 
+        entrenamiento y validación de los modelos. Se trata del paso final del proyecto y sirve como prueba de la idea central del trabajo.
+
+    \end{itemize}
+
+    Se ideó siguiendo un planteamiento incremental, priorizando tareas “sencillas”, como la configuración del sistema de cámaras o la 
+    transferencia de datos, partes esenciales para el posterior entrenamiento de los modelos. Las funciones no esenciales, como implementación 
+    de locomoción a bajo nivel, quedaron descartadas debido a la sobrecomplejidad que suponían.
+
+    \item \textbf{Análisis de requisitos funcionales}
+
+    Los requisitos funcionales describen las funciones y los comportamientos que el sistema debe ser capaz de realizar para cumplir los objetivos 
+    especificados. 
+    
+    Para este proyecto se definieron los siguientes:
+    
+    \begin{itemize}
+    
+        \item \textbf{Captura de movimiento del robot y del objetivo}:
+        El sistema deberá ser capaz de obtener la posición del robot y del objetivo de forma correcta. Se usará el sistema de captura Optitrack para la 
+        obtención de estos datos.
+    
+        \item \textbf{Transmisión de datos}:
+        El sistema deberá soportar la transmisión de datos desde el Motive al ordenador donde se ejecutan los scripts de control y entrenamiento. La 
+        transferencia deberá ser estable, garantizando que las observaciones recibidas sean correctas para su posterior uso en entrenamiento.
+
+        \item \textbf{Identificación de elementos del entorno}:
+        El sistema deberá ser capaz de diferenciar los datos correspondientes al robot y al objetivo. Con esto, se construirán las observaciones con las 
+        que se representará el entorno en cada instante.
+
+        \item \textbf{Control de movimiento del robot}:
+        El sistema deberá ser capaz de enviar instrucciones al robot Unitree Go2 con las cuales realizará las acciones designadas previamente. Estas instrucciones 
+        corresponden con funciones de alto nivel del \Gls{sdk} del robot y permitirán el movimiento de este a través del entorno.
+
+        \item \textbf{Generación y almacenamiento de datos de entrenamiento}:
+        El sistema deberá permitir almacenar los datos asociados a las experiencias de interactuar con el entorno de manera adecuada para su posterior uso en 
+        entrenamiento. Para el modelo de mundo deberá guardar estos datos en una lista de tuplas con la forma [\( Obs_t \), Accion, \( Obs_{t+1} \)], mientras que para el modelo de 
+        utilidad deberán ser de la forma [\( Obs_{t+1} \), Utilidad] (esto se explicará con más detalle en el apartado de desarrollo, sección \ref{sec:desviaciones_planificacion}, 
+        página \pageref{sec:desviaciones_planificacion}).
+
+        \item \textbf{Entrenamiento del modelo de mundo}:
+        El sistema deberá ser capaz de entrenar un modelo de mundo que permita predecir el estado siguiente del entorno a partir del estado actual y de la acción a 
+        ejecutar por el robot.
+
+        \item \textbf{Entrenamiento del modelo de utilidad}:
+        El sistema deberá permitir entrenar un modelo de utilidad con el cual predecir el valor de efectividad que tendrá un determinado estado en función del objetivo 
+        que se desea alcanzar.
+
+        \item \textbf{Evaluación de los modelos entrenados}:
+        El sistema deberá incluir métodos para validar y evaluar los modelos entrenados, mostrar gráficas y métricas adecuadas para comprobar si las predicciones 
+        son suficientemente correctas.
+
+        \item \textbf{Realizar pruebas en entorno real}:
+        El sistema deberá ser capaz de ejecutar pruebas reales con el robot con el fin de comprobar su comportamiento en situaciones de uso reales.
+        
+    \end{itemize}
+
+    A lo largo del proyecto se fueron revisando estos requisitos permitiendo realizar ajustes en las distintas fases y su alcance.
+
+    \item \textbf{Análisis de requisitos no funcionales}
+
+    Los requisitos no funcionales describen las propiedades de calidad y las restricciones que debe cumplir el sistema durante su funcionamiento.
+    
+    Para este proyecto se definieron los siguientes:
+
+    \begin{itemize}
+        \item \textbf{Precisión en la obtención de la posición}:
+        La captura de posición del robot y del objetivo deben ser lo suficientemente precisos tanto para que los datos puedan ser utilizados para crear modelos 
+        funcionales como para la validación de estos mismos.
+
+        \item \textbf{Transmisión de datos fiable}:
+        La transmisión de datos entre Motive y el ordenador receptor deberá ser fiable, con el fin de minimizar posibles fallos o pérdidas en la conexión. 
+        Es especialmente relevante la consistencia temporal con las acciones para obtener correctamente los datos de entrenamiento.
+
+        \item \textbf{Seguridad durante las pruebas en entorno real}: 
+        El sistema deberá utilizarse siempre en un entorno seguro durante las pruebas con el robot real. Será necesario establecer los límites de movimiento del 
+        robot y despejar el entorno para minimizar el riesgo de colisión o caídas durante estas pruebas.
+
+        \item \textbf{Modularidad}:
+        El sistema desarrollado deberá estar organizado de manera modular, es decir, separando las distintas fases en códigos independientes (adquisición de 
+        datos, entrenamiento, pruebas, control del robot, etc). Esto se realiza con el objetivo de facilitar el mantenimiento y una posible ampliación o modificación 
+        posterior, además de adaptarse a la metodología seleccionada, a la planificación inicial y a posibles desviaciones de esta, facilitando su adaptación 
+        y justificación.
+
+        \item \textbf{Escalabilidad}:
+        Aunque para este proyecto se utilizará únicamente un escenario concreto, el sistema deberá estar diseñado para ser escalable, de forma que pueda 
+        adaptarse a nuevos objetivos, conjuntos de datos y modificaciones en los modelos sin necesidad de rehacer por completo el código.
+
+        \item \textbf{Mantenibilidad}:
+        El código desarrollado deberá ser claro y estar bien documentado, facilitando la comprensión de este y modificaciones futuras.
+
+        \item \textbf{Eficiencia computacional}:
+        El entrenamiento de los modelos deberá presentar un coste computacional razonable para los recursos disponibles y los experimentos deberán poder completarse en 
+        un tiempo asequible. Esto quiere decir, deberá poder ejecutarse con un hardware similar al utilizado por el alumno y en un 
+        tiempo (no tengo muy claro cómo poner esto).
+
+        \item \textbf{Trazabilidad}:  
+        El sistema deberá permitir guardar y consultar posteriormente los datos obtenidos de las pruebas realizadas, con el fin de comparar y evaluar los 
+        distintos modelos ejecutados durante el desarrollo.
+        
+    \end{itemize}
+
+    \item \textbf{Análisis de riesgos y limitaciones}
+
+    
+    Tras realizar un análisis de riesgos, se identificaron las principales situaciones que podrían comprometer el desarrollo de este 
+    proyecto. Para cada riesgo se estimó su probabilidad de ocurrir, así como su impacto sobre el sistema, y se establecieron las medidas 
+    de mitigación con la finalidad de prevenir o reducir sus consecuencias.
+
+    Para facilitar la explicación se empleó la siguiente escala:
+
+    \begin{itemize}
+        \item Probabilidad: baja (B), media (M), alta (A).
+        \item Impacto: baja (B), media (M), alta (A).
+    \end{itemize}
+
+    \renewcommand{\arraystretch}{1.1}
+    \setlength{\tabcolsep}{3pt}
+    \small
+    \begin{longtable}{>{\raggedright\arraybackslash}p{0.7cm}|
+                    >{\raggedright\arraybackslash}p{2.6cm}|
+                    >{\centering\arraybackslash}p{0.8cm}|
+                    >{\centering\arraybackslash}p{0.8cm}|
+                    >{\raggedright\arraybackslash}p{2.8cm}|
+                    >{\raggedright\arraybackslash}p{5.0cm}}
+    \caption{Matriz de riesgos del proyecto.}
+    \label{tab:matriz_riesgos} \\
+    
+    \rowcolor{udcpink!25}
+    \textbf{ID} & \textbf{Riesgo} & \textbf{Prob.} & \textbf{Imp.} & \textbf{Consecuencias} & \textbf{Medidas de mitigación} \\
+    \endfirsthead
+
+    \multicolumn{6}{c}{\tablename\ \thetable{} -- {\small \textit{(vén da páxina anterior)}}} \\
+    \rowcolor{udcpink!25}
+    \textbf{ID} & \textbf{Riesgo} & \textbf{Prob.} & \textbf{Imp.} & \textbf{Consecuencias} & \textbf{Medidas de mitigación} \\
+    \endhead
+
+    \multicolumn{6}{c}{\dotfill{\small \textit{(continúa na páxina seguinte)}}\dotfill} \\
+    \endfoot
+
+    
+    \endlastfoot
+
+    R1 &
+    Problemas en entrenamiento en simulación (Falta de funciones de alto nivel, integración con MuJoCo) &
+    A & A &
+    Retraso importante o eliminación de la parte de simulación &
+    Priorizar un modelo simple de locomoción, reutilizar entornos ya existentes, establecer un criterio de parada en caso de consumir demasiado tiempo en esta fase, descartar el entrenamiento en simulación y trabajar únicamente con el robot real. \\
+    \hline
+
+    R2 &
+    Ausencia de librerías para el control del robot en simulación &
+    M & A &
+    Imposibilidad de lograr locomoción en el robot en simulación, alto coste de desarrollo &
+    Intentar crear funciones de alto nivel, definir acciones sencillas, realizar pruebas progresivas en el desarrollo. \\
+    \hline
+
+    R3 &
+    Problemas de integración con Optitrack y Motive/NatNet &
+    A & A &
+    Retraso en la obtención de datos y en el entrenamiento de los modelos. &
+    Designar tiempo previamente para la puesta a punto de las tecnologías, pruebas de los servicios de transferencia y streaming con scripts acotados, aislar posibles problemas (ordenador de streaming o de entrenamiento), contactar con el servicio técnico para solucionar el problema. \\
+    \hline
+
+    R4 &
+    Problemas con el seguimiento de los marcadores o poca fidelidad del tracking &
+    M & A &
+    Datos no precisos o incompletos, modelos mal entrenados &
+    Reubicar cámaras, calibración periódica, definir volumen de captura en el entorno, modificar cantidad y posición de marcadores, filtrar errores. \\
+    \hline
+
+    R5 &
+    Desincronización en la transmisión de datos &
+    M & A &
+    Conjuntos de datos $(o_t,a_t,o_{t+1})$ incorrectos, modelos mal entrenados &
+    Pruebas de consistencia, timestamping en ambos dispositivos, realizar pruebas sencillas para identificar posible fallo, fijar frecuencia de muestreo de cámaras. \\
+    \hline
+
+    R6 &
+    Problemas con los datos para entrenamiento (Datos insuficientes o poca diversidad) &
+    M & M &
+    Sobreajuste, mala generalización, modelos mal entrenados &
+    Validación con modelos parciales, criterios mínimos de cantidad y calidad, realizar pruebas con distintas posiciones de robot/objetivo, incrementar el muestreo, reutilizar conjuntos de datos de modelos previos. \\
+    \hline
+
+    R7 &
+    Problemas en el entrenamiento (arquitectura de la red de neuronas, hiperparametros, no convergencia de los modelos, etc) &
+    M & M &
+    Retrasos entrenando los modelos, resultados no concluyentes &
+    Comenzar con modelos simples e ir aumentando progresivamente, normalizar entradas y salidas, early stopping, métricas eficientes, ajustar los hiperparametros (fine tunning). \\
+    \hline
+
+    R8 &
+    Limitaciones computacionales (tiempo de entrenamiento elevado) &
+    B & B &
+    Retrasos entrenando modelos &
+    Reducir tamaño de los modelos, frecuencia y batch ajustados, uso de checkpoints, ejecutar entrenamientos nocturnos, emplear mejores equipos si están disponibles. \\
+    \hline
+
+    R9 &
+    Cambios en el alcance inicial por dificultades técnicas &
+    M & M &
+    Desviaciones de objetivos y entregables incompletos &
+    Definir entregables mínimos, revisiones periódicas con tutores, justificación en caso de desviaciones en la planificación. \\
+    \hline
+
+    R10 &
+    Riesgo de daño del material durante las pruebas del robot (Caidas, golpes, etc) &
+    M & A &
+    Daño del robot, interrupción del proyecto &
+    Entorno de pruebas despejado y seguro, limite de velocidad para el robot, delimitación clara de los límites seguros, programar parada de emergencia en los scripts de compilación de datos y de validación de entrenamiento, supervisión de las ejecuciones. \\
+    \hline
+
+    R11 &
+    Problemas con el software (Fallos de configuración, errores en el código) &
+    M & M &
+    Retraso y pérdida de resultados &
+    Control de versiones mediante Github, pruebas sencillas en los componentes claves (Motive y NatNet, SDK del robot). \\
+    \hline
+
+    R12 &
+    Dependencia de disponibilidad del laboratorio o los recursos (robot, cámaras) &
+    B & B &
+    Tiempo para realizar pruebas reducido y retrasos en la validación de los modelos &
+    Planificar sesiones con antelación, prioridad al trabajo en remoto, priorizar pruebas críticas, organización del trabajo con otros usuarios del laboratorio. \\
+
+    \end{longtable}
+    \normalsize
+
+    En resumen, de los riesgos recogidos en la tabla anterior, los más destacables debido a su impacto y probabilidad son:
+
+    \begin{itemize}
+        \item R1, R3 y R10, principalmente por su capacidad de retrasar fases completas del proyecto o incluso imposibilitar su finalización.
+        \item R2 y R5, debido a que repercuten directamente sobre el entrenamiento del sistema.
+    \end{itemize}
+
+    Con el fin de paliar y controlar los posibles problemas que pudieran surgir durante el desarrollo se empleó un seguimiento iterativo: al 
+    finalizar cada fase se revisaron los riesgos ocurridos, se adoptaron las medidas de mitigación planteadas y de ser necesario se modificó el 
+    alcance y la planificación de ciertas fases para adaptarse a estos inconvenientes.
+
+    \item \textbf{Especificación de tecnologías a utilizar}
+
+    Para llevar a cabo el desarrollo de este trabajo se seleccionaron las siguientes tecnologías (explicadas en mayor detalle 
+    en la sección \ref{sec:tecnologias_empleadas}, página \pageref{sec:tecnologias_empleadas}):
+    
+    \begin{itemize}
+        \item Entorno Python: el propio lenguaje y las librerías necesarias para trabajar con los datos y el entrenamiento (Numpy, Tensorflow, etc).
+        \item Entorno Optitrack: Sistema de cámaras Optitrack y el software necesario para interactuar con el (Motive y NatNet \Gls{sdk}).
+        \item Entorno del robot: Robot Unitree Go2 y su \Gls{sdk} para controlar el movimiento.
+        \item Entorno de simulación: MuJoCo y modelo \Gls{xml} del Go2, modificado para añadir el objetivo en el mundo.
+    \end{itemize}
+
+    La utilización de todas estas tecnologías de la forma adecuada permite el éxito de este proyecto.
+
+    \item \textbf{Planificación inicial}
+
+    Una vez finalizado todo lo anterior, se procedió a realizar una planificación detallada del proyecto. Para esto se creó un diagrama de Gantt (figura \ref{fig:diagrama_gantt}), en el cual se 
+    estructuraron las tareas en fases y se definieron los tiempos estimados para cada una de ellas, así como los responsables de cada una. Gracias a esta planificación, 
+    se logró un control adecuado del proyecto en tiempo y recursos, y facilitó solventar las desviaciones ocurridas a lo largo del desarrollo.
+
+    \begin{figure}[hp!]
+        \centering
+        \includegraphics[width=\textwidth]{imaxes/diagramaGanttTFG.png}
+        \caption{Diagrama de Gantt del proyecto.}
+        \label{fig:diagrama_gantt}
+    \end{figure}
+
+\end{itemize}
+
+
+\subsection{Recursos humanos}
+\label{sec:recursos_humanos}
+
+El desarrollo de este proyecto pudo llevarse a cabo gracias a la colaboración del siguiente equipo:
+
+\begin{itemize}
+    \item El alumno cumple la función de desarrollador principal del trabajo, ocupándose de la planificación y el desarrollo de cada una de las 
+    iteraciones. Destacando tareas como la configuración de los distintos entornos, la implementación del código para las funcionalidades o la 
+    realización de las pruebas de validación necesarias.
+
+    \item Los dos tutores desempeñaron la tarea de supervisar y orientar el desarrollo del proyecto. Su función principal consistio en 
+    proporcionar feedback a lo largo de las distintas iteraciones y solucionar dudas y problemas técnicos que surgieron a lo largo del 
+    desarrollo del proyecto, así como tomar decisiones sobre el rumbo de este para asegurar la finalización del proyecto.
+
+\end{itemize}
+
+\subsection{Recursos técnicos}
+\label{sec:recursos_tecnicos}
+
+Para llevar a cabo el desarrollo de este proyecto fueron necesarios una serie de recursos, tanto de hardware como de software, que hicieron 
+posible la implementación y posterior prueba de los distintos modelos desarrollados. A continuación citaremos estos recursos junto a una breve 
+descripción: 
+
+\begin{itemize}
+    \item \textbf{Hardware}:
+    
+    \begin{itemize}
+        \item Robot Unitree Go2. 
+        \item Sistema de cámaras Optitrack (8 cámaras Primex 13W), con el que se obtendrán la posición del robot y del objetivo.
+        \item Rack y elementos de soporte y cableado, estructura necesaria para sostener la infraestructura de las cámaras.
+        \item Marcadores Optitrack (6 en total) que utilizaran las cámaras para identificar los objetos y obtener su posición.
+        \item Intel NUC, ordenador que se utilizará para controlar las cámaras.
+        \item Switch para conectar la red de cámaras y el Intel NUC.
+        \item Cable Ethernet, el cual se empleará para conectar el ordenador con el robot y deberá tener la longitud suficiente para 
+        permitirle moverse por el espacio (en este caso se utilizó un cable de 15m).
+        \item Ordenador personal, con potencia suficiente para llevar a cabo el entrenamiento de los modelos de aprendizaje automático.
+    \end{itemize}
+    \item \textbf{Software}:
+
+    \begin{itemize}
+        \item \Gls{sdk} de Unitree, que contiene las funciones de control para el robot. 
+        \item Motive, programa desarrollado por Optitrack para controlar las cámaras y obtener los datos de posición.
+        \item \Gls{sdk} de NatNet, biblioteca que permite la transferencia de datos vía UDP entre Motive y el ordenador personal.
+        \item Python, el lenguaje de programación utilizado para crear los scripts necesarios para el proyecto, junto con las distintas 
+        librerías necesarias para esto (mencionadas en la sección \ref{sec:entorno_python}, página \pageref{sec:entorno_python}).
+        \item MuJoCo, el motor de físicas empleado para la simulación.
+    \end{itemize}
+    
+\end{itemize}
+
+La combinación de todas estas tecnologías permitió el desarrollo de este trabajo, desde la obtención de los datos necesarios para entrenar 
+los modelos de mundo y de utilidad, hasta el posterior entrenamiento y evaluación de los mismos.
+
+\subsection{Costes}
+\label{sec:costes}
+
+Para explicar los costes asociados al desarrollo de este proyecto, se dividirán en dos grupos, los referentes al personal y los referentes 
+a los materiales necesarios para llevarlo a cabo:
+
+\begin{itemize}
+    \item \textbf{Coste de personal}:
+    
+    \begin{itemize}
+        \item Santiago López Silva, como desarrollador principal. Al tratarse del desarrollo de un TFG no obtuvo remuneración por esta tarea, 
+        sin embargo, suponiendo un puesto como ingeniero informático junior (recién egresado y con menos de un año de experiencia), el salario 
+        medio se encuentra alrededor de los 20.000€ en España (según el portal de empleo 
+        Jobted\footnote{\url{https://www.jobted.es/salario/ingeniero-inform\%C3\%A1tico}}).
+        \item Martín Naya Varela, con el cargo de ayudante doctor (A-LOSU) para la Universidad de La Coruña, con un salario anual de 
+        33.092,08€ (Segun los datos aportados por la pagina oficial de la UDC\footnotemark).
+        \item Alejandro Romero Montero, también con el cargo de ayudante doctor (A-LOSU) para la Universidad de la Coruña, con un salario anual 
+        de 33.092,08€ (Segun los datos aportados por la pagina oficial de la UDC\footnotemark[\value{footnote}]).
+        \footnotetext{\url{https://www.udc.es/export/sites/udc/goberno/_galeria_down/xerencia/servizos/retribucions_seguridade_social_e_accion_social/taboas_retributivas/taboas2026/pdi-lab.pdf_2063069294.pdf}}
+    \end{itemize}
+    
+    \item \textbf{Coste material}:
+    
+    \begin{itemize}
+        \item Robot Unitree Go2 EDU PLUS (14520€).
+        \item Sistema de cámaras Optitrack con el software Motive (8 cámaras x 1500€ y el software 1000€).
+        \item Estructura de soporte para el sistema optitrack, el rack y los soportes para las cámaras (7000€).
+        \item Intel NUC (500€).
+    \end{itemize}
+
+\end{itemize}
+
+Calculando en función de las horas necesarias para realizar este proyecto, da como resultado un coste de 7.060,32€, como se puede ver reflejado en la 
+tabla \ref{tab:coste_personal}. Cabe destacar que el material necesario para el proyecto fue proporcionado por el CITIC.
+
+\begin{table}[H]
+    \centering
+    \small
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.15}
+    \rowcolors{2}{white}{udcgray!25}
+    \begin{tabularx}{\textwidth}{
+    >{\centering\arraybackslash}X|
+    >{\centering\arraybackslash}X|
+    >{\centering\arraybackslash}p{1.7cm}|
+    >{\centering\arraybackslash}p{1.4cm}|
+    >{\centering\arraybackslash}p{2cm}}
+    \rowcolor{udcpink!25}
+    \textbf{Integrante} & \textbf{Rol} & \textbf{€/hora} & \textbf{Horas} & \textbf{Coste} \\
+    Santiago López Silva & Desarrollador & 11,63€ & 450 & 5.232,56€ \\
+    Martín Naya Varela & Tutor & 19,24€ & 60 & 1.154,37€ \\
+    Alejandro Romero Montero & Tutor & 19,24€ & 35 & 673,39€ \\
+    \end{tabularx}
+    \caption{Coste estimado de personal del proyecto.}
+    \label{tab:coste_personal}
+\end{table}
+
+\subsection{Desviaciones en la planificación}
+\label{sec:desviaciones_planificacion}
+
+A lo largo del desarrollo de este proyecto se experimentaron varios imprevistos que impidieron, en mayor o menor medida, el cumplimiento de la 
+planificación inicial. En concreto, se produjeron dos desviaciones relevantes, asociadas con la integración y puesta a punto del entorno 
+de simulación y el sistema de captura de movimiento. Estos imprevistos supusieron una reorganización de las prioridades y de los tiempos 
+establecidos en un inicio. A continuación, se explicaran sus detalles:
+
+\begin{itemize}
+    \item Imposibilidad de realizar el entrenamiento en un entorno simulado:
+    Inicialmente se optó por realizar el entrenamiento del modelo deliberativo en un entorno simulado (MuJoCo) como paso previo a su 
+    transferencia al robot real, con el fin de probar la eficiencia y la viabilidad del sistema. Sin embargo, durante la implementación de 
+    este se encontró un problema que impidió su desarrollo: el control del movimiento del robot en simulación no disponía de las funciones de 
+    alto nivel equivalentes a las que se utilizaron posteriormente en el robot real. Esto suponía que para entrenar el robot en este entorno 
+    era necesario trabajar a bajo nivel, es decir, operar directamente con acciones sobre los actuadores, controlando el torque aplicado a cada 
+    uno de los motores necesarios para la estabilidad y la generación de la marcha.
+
+    Este enfoque acarreaba una complejidad añadida que suponía una desviación importante en el objetivo principal del trabajo (el aprendizaje 
+    de modelos de mundo y utilidad), ya que implicaba invertir una gran parte del tiempo previsto en la creación de un controlador de 
+    movimiento y en definir un espacio de acciones mucho más complejo. Para solucionar este problema e intentar sacar adelante el entrenamiento de 
+    los modelos de mundo y de utilidad en este entorno, se intentó aprender un modelo sencillo de movimiento mediante aprendizaje automático que 
+    cumpliera con las acciones básicas con las que se movería el robot (avanzar x metros y rotar sobre sí mismo x grados). Sin embargo, el resultado 
+    obtenido no fue satisfactorio, el movimiento del robot era muy rudimentario y no conseguía avanzar.
+    Debido a estas pruebas, y a que se vio que aprender un controlador adecuado llevaría más tiempo del deseado, se produjo un retraso 
+    significativo. Tras hablarlo con los tutores, se tomó la decisión de priorizar el desarrollo en el entorno real, donde sí existían las funciones 
+    de alto nivel (proporcionadas en el \Gls{sdk} del robot) necesarias para hacer que el robot pueda desplazarse y girar de forma correcta, estable y robusta, 
+    permitiendo así llevar a cabo la creación del sistema y evitando estancarse en una tarea no prevista.
+
+    Esta decisión llevó a la reducción del alcance esperado para esta fase, reasignando el esfuerzo hacia la creación del sistema en el 
+    entorno real, permitiendo terminar el proyecto de forma correcta dentro del plazo establecido.
+ 
+    \item Retraso en la configuración del Motive y la transmisión de datos:
+    La segunda desviación se produjo durante la fase de puesta a punto del sistema Optitrack. A pesar de contar con el hardware necesario, la 
+    configuración del Motive para realizar de manera efectiva la transmisión de datos hacia el otro ordenador (donde se ejecutaban los scripts 
+    de entrenamiento), tomó más tiempo del esperado inicialmente. 
+
+    Fue necesario realizar esta comunicación, en lugar de ejecutar todo en el mismo ordenador, entre otras porque Motive solo tiene soporte para Windows 
+    y no para Ubuntu. Además, el fabricante recomendaba mantener separado Motive para evitar problemas con la actualización.
+
+
+    Este retraso se debió principalmente a dos factores: el primero debido al desconocimiento inicial de la tecnología (tanto de Motive como 
+    del \Gls{sdk} de Natnet) así como la configuración de red necesaria requirieron más tiempo del previsto para conseguir que todo funcionara 
+    de manera correcta. Realizar pruebas para descubrir el modo de conexión correcto para la configuración utilizada (modo Unicast) y 
+    configurar las IPs y los puertos de los distintos dispositivos, además de estudiar y modificar algunas funciones del SDK para recibir los 
+    paquetes de información (vía UDP) en el ordenador receptor.
+    El otro factor desencadenante del retraso en esta parte fue la tardanza del servicio técnico español de Optitrack a la hora de resolver 
+    ciertas dudas planteadas al comienzo de la fase de familiarización con la tecnología, teniendo que contactar con el soporte técnico de 
+    Reino Unido para resolverlas.
+
+    El resultado de este retraso llevó al bloqueo de las tareas posteriores (como la toma de datos y el entrenamiento de los modelos) hasta 
+    ser capaces de establecer un flujo de datos estable que permitiera obtener estos datos de manera correcta.
+
+
+\end{itemize}
+
+Ambos retrasos reflejan la naturaleza experimental de proyectos de este estilo y la necesidad de replanificación y tomar contramedidas que 
+permitan sobrepasar incidentes durante el proyecto. Finalmente se consiguió completar el tema principal del proyecto, demostrando que a pesar 
+de tener que prescindir de una parte concebida inicialmente como importante, el proyecto seguía siendo viable y cumplía los puntos 
+fundamentales planteados al inicio.
+

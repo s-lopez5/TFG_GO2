@@ -2,13 +2,40 @@
 
 \pagestyle{empty}
 \begin{abstract}
-  \blindtext % substitúe este comando polo resumo do teu TFG
-             % na lingua principal do documento (tipicamente: galego)
+  Este trabajo aborda el desarrollo de un sistema deliberativo de toma de decisiones para un robot cuadrúpedo Unitree Go2, basado en el aprendizaje autónomo de modelos de mundo y modelos de 
+  utilidad. El objetivo principal del proyecto es que el robot sea capaz de aprender, a partir de sus propias experiencias, como evoluciona el entorno tras ejecutar una acción y que estados 
+  resultan más favorables para alcanzar un determinado objetivo.
+
+  Para ello, se creó un sistema en el que el modelo de mundo se encarga de predecir el estado siguiente del entorno en función de la observación del estado actual y de la acción seleccionada, 
+  mientras que el modelo de utilidad evalúa la efectividad de los estados predichos para completar la meta establecida. La combinación de estos dos modelos permite seleccionar deliberadamente 
+  la acción más adecuada en cada instante.
+
+  Durante el desarrollo se trabajó inicialmente con MuJoCo en un entorno simulado, aunque los problemas encontrados en el control del robot dentro de este entorno llevaron a centrar la atención 
+  en la implementación principal en el robot real. Para obtener las observaciones del entorno se utilizo el sistema de captura de movimiento Optitrack, el cual se encargaba de conseguir la 
+  posicion del robot y del objetivo. A partir de los datos recolectados, se generaron los conjuntos de entrenamiento necesarios para construir y evaluar los modelos mediante redes neuronales 
+  desarrolladas en Python con la librería TensorFlow.
+
+  Los resultados obtenidos demuestran que es posible entrenar modelos capaces de aproximar la dinámica del entorno y evaluar la utilidad de distintas posiciones para cumplir una 
+  meta. Adicionalmente, se analizó y se probó la independencia entre modelos de mundo y de utilidad, comprobando que ambos pueden separarse y reutilizarse con otros modelos.
 
   \vspace*{25pt}
   \begin{segundoresumo}
-    \blindtext % substitúe este comando polo resumo do teu TFG
-               % na lingua secundaria do documento (tipicamente: inglés)
+    This work addresses the development of a deliberative decision-making system for a Unitree Go2 quadruped robot, based on the autonomous learning of world models and utility models. The main 
+    objective of the project is for the robot to be able to learn, from its own experiences, how the environment evolves after executing an action and which states are more favorable for reaching 
+    a given objective.
+
+    To achieve this, a system was created in which the world model is responsible for predicting the next state of the environment based on the observation of the current state and the selected 
+    action, while the utility model evaluates the effectiveness of the predicted states in achieving the established goal. The combination of these two models makes it possible to deliberately 
+    select the most appropriate action at each moment.
+
+    During development, work initially focused on MuJoCo in a simulated environment. However, the problems encountered when controlling the robot within this environment led to shifting the main 
+    focus to the implementation on the real robot. To obtain observations from the environment, the OptiTrack motion capture system was used, which was responsible for obtaining the position of 
+    both the robot and the objective. Based on the collected data, the necessary training datasets were generated to build and evaluate the models using neural networks developed in Python with 
+    the TensorFlow library.
+
+    The results obtained demonstrate that it is possible to train models capable of approximating the dynamics of the environment and evaluating the utility of different positions for achieving 
+    a goal. Additionally, the independence between world models and utility models was analyzed and tested, confirming that both can be separated and reused with other models.
+
   \end{segundoresumo}
 \vspace*{25pt}
 \input{portada/palabras_chave}

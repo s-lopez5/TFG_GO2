@@ -1,0 +1,100 @@
+\chapter{Analisis}
+\label{chap:analisis}
+
+\section{Requisitos}
+\label{sec:requisitos}
+
+En este apartado se presentarán los requisitos del sistema desarrollado para este proyecto, definiendo con 
+claridad las capacidades y comportamientos que ofrecerá la solución final. Para estructurar su descripción, 
+se distinguirán dos categorías fundamentales:
+
+\subsection{Requisitos funcionales}
+\label{sec:req_no_funcionales}
+
+Los requisitos funcionales describen las funciones y los comportamientos que el sistema debe ser capaz de realizar 
+para cumplir los objetivos especificados. 
+Para este proyecto se definieron los siguientes:
+
+\begin{itemize}
+    \item \textbf{Captura de movimiento del robot y del objetivo}:
+    El sistema deberá ser capaz de obtener la posición del robot y del objetivo de forma correcta. Se usará el sistema de captura Optitrack para la 
+    obtención de estos datos.
+ 
+    \item \textbf{Transmisión de datos}:
+    El sistema deberá soportar la transmisión de datos desde el Motive al ordenador donde se ejecutan los scripts de control y entrenamiento. La 
+    transferencia deberá ser estable, garantizando que las observaciones recibidas sean correctas para su posterior uso en entrenamiento.
+
+    \item \textbf{Identificación de elementos del entorno}:
+    El sistema deberá ser capaz de diferenciar los datos correspondientes al robot y al objetivo. Con esto, se construirán las observaciones con las 
+    que se representará el entorno en cada instante.
+
+    \item \textbf{Control de movimiento del robot}:
+    El sistema deberá ser capaz de enviar instrucciones al robot Unitree Go2 con las cuales realizará las acciones designadas previamente. Estas instrucciones 
+    corresponden con funciones de alto nivel del \Gls{sdk} del robot y permitirán el movimiento de este a través del entorno.
+
+    \item \textbf{Generación y almacenamiento de datos de entrenamiento}:
+    El sistema deberá permitir almacenar los datos asociados a las experiencias de interactuar con el entorno de manera adecuada para su posterior uso en 
+    entrenamiento. Para el modelo de mundo deberá guardar estos datos en una lista de tuplas con la forma [\( Obs_t \), Accion, \( Obs_{t+1} \)], mientras que para el modelo de 
+    utilidad deberán ser de la forma [\( Obs_t \), Utilidad] (esto se explicará con más detalle en el apartado de desarrollo, sección \ref{sec:desviaciones_planificacion}, 
+    página \pageref{sec:desviaciones_planificacion}).
+
+    \item \textbf{Entrenamiento del modelo de mundo}:
+    El sistema deberá ser capaz de entrenar un modelo de mundo que permita predecir el estado siguiente del entorno a partir del estado actual y de la acción a 
+    ejecutar por el robot.
+
+    \item \textbf{Entrenamiento del modelo de utilidad}:
+    El sistema deberá permitir entrenar un modelo de utilidad con el cual predecir el valor de efectividad que tendrá un determinado estado en función del objetivo 
+    que se desea alcanzar.
+
+    \item \textbf{Evaluación de los modelos entrenados}:
+    El sistema deberá incluir métodos para validar y evaluar los modelos entrenados, mostrar gráficas y métricas adecuadas para comprobar si las predicciones 
+    son suficientemente correctas.
+
+    \item \textbf{Realizar pruebas en entorno real}:
+    El sistema deberá ser capaz de ejecutar pruebas reales con el robot con el fin de comprobar su comportamiento en situaciones de uso reales.
+    
+\end{itemize}
+
+
+\subsection{Requisitos no funcionales}
+\label{sec:req_no_funcionales}
+
+Los requisitos no funcionales describen las propiedades de calidad y las restricciones que debe cumplir el sistema durante su funcionamiento.
+Para este proyecto se definieron los siguientes:
+
+\begin{itemize}
+    \item \textbf{Precisión en la obtención de la posición}:
+    La captura de posición del robot y del objetivo deben ser lo suficientemente precisos tanto para que los datos puedan ser utilizados para crear modelos 
+    funcionales como para la validación de estos mismos.
+
+    \item \textbf{Transmisión de datos fiable}:
+    La transmisión de datos entre Motive y el ordenador receptor deberá ser fiable, con el fin de minimizar posibles fallos o pérdidas en la conexión. 
+    Es especialmente relevante la consistencia temporal con las acciones para obtener correctamente los datos de entrenamiento.
+
+    \item \textbf{Seguridad durante las pruebas en entorno real}: 
+    El sistema deberá utilizarse siempre en un entorno seguro durante las pruebas con el robot real. Será necesario establecer los límites de movimiento del 
+    robot y despejar el entorno para minimizar el riesgo de colisión o caídas durante estas pruebas.
+
+    \item \textbf{Modularidad}:
+    El sistema desarrollado deberá estar organizado de manera modular, es decir, separando las distintas fases en códigos independientes (adquisición de 
+    datos, entrenamiento, pruebas, control del robot, etc). Esto se realiza con el objetivo de facilitar el mantenimiento y una posible ampliación o modificación 
+    posterior, además de adaptarse a la metodología seleccionada, a la planificación inicial y a posibles desviaciones de esta, facilitando su adaptación 
+    y justificación.
+
+    \item \textbf{Escalabilidad}:
+    Aunque para este proyecto se utilizará únicamente un escenario concreto, el sistema deberá estar diseñado para ser escalable, de forma que pueda 
+    adaptarse a nuevos objetivos, conjuntos de datos y modificaciones en los modelos sin necesidad de rehacer por completo el código.
+
+    \item \textbf{Mantenibilidad}:
+    El código desarrollado deberá ser claro y estar bien documentado, facilitando la comprensión de este y modificaciones futuras.
+
+    \item \textbf{Eficiencia computacional}:
+    El entrenamiento de los modelos deberá presentar un coste computacional razonable para los recursos disponibles y los experimentos deberán poder completarse en 
+    un tiempo asequible. Esto quiere decir, deberá poder ejecutarse con un hardware similar al utilizado por el alumno y en un 
+    tiempo (no tengo muy claro cómo poner esto).
+
+    \item \textbf{Trazabilidad}:  
+    El sistema deberá permitir guardar y consultar posteriormente los datos obtenidos de las pruebas realizadas, con el fin de comparar y evaluar los 
+    distintos modelos ejecutados durante el desarrollo.
+    
+\end{itemize}

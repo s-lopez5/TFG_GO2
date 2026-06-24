@@ -1,18 +1,70 @@
 \chapter{Introdución}
 \label{chap:introducion}
 
-\lettrine{P}{rimer} capítulo da memoria, onde xeralmente se exporán as
-liñas mestras do traballo, os obxectivos, etc. Incluimos un par de
-exemplos de citas~\cite{ErlangBook,ErlangWebBook} e de referencias
-internas (sección \ref{sec:mostra}, páxina \pageref{sec:mostra}).
+\lettrine{E}n los últimos tiempos, la robótica autónoma ha experimentado un gran avance gracias 
+al desarrollo de nuevas técnicas de aprendizaje automático, las cuales permiten a los robots 
+adaptarse y operar en entornos más complejos y cambiantes que las aproximaciones más tradicionales.
 
-\Blindtext
+El método que trataremos a continuación busca conseguir que los robots sean capaces de aprender 
+de forma autónoma modelos del mundo y objetivos en base a experiencias propias. 
+En este contexto, los modelos de mundo permiten al agente, que se encuentra en un entorno y en cierto estado 
+en el instante actual, predecir el siguiente estado tras haber realizado 
+una acción; mientras que los modelos de utilidad buscan discernir el nivel de eficiencia que 
+tendrán dichas acciones para alcanzar cierta meta. La combinación de ambos da lugar a un sistema 
+deliberativo de toma de decisiones capacitado para completar estas tareas.
 
-\section{Sección de mostra}
-\label{sec:mostra}
+En este trabajo nos centraremos en la creación de este sistema, basado en modelos de mundo 
+y utilidad, aplicado a un robot cuadrupedo Unitree Go2\cite{UnitreeGo2Web}, para completar una tarea dada al 
+poder seleccionar deliberadamente la mejor acción de un conjunto de acciones para un estado dado. Este deberá ser capaz de identificar 
+objetivos de forma autónoma (en este caso, aprender a acercarse o alejarse de un objetivo) y cumplirlos en un 
+entorno real (reducir la distancia a dichos objetos seleccionando la acción más adecuada para ello).
 
-\Blindtext
+\section{Motivación}
+\label{sec:motivacion}
 
-\subsection{Subsección de mostra}
+La motivación principal de este trabajo nace de las limitaciones que presentan los enfoques tradicionales 
+de la robótica basada en control clásico, en los cuales, características clave como la función de recompensa, los objetivos o 
+los modelos del entorno son definidas por los programadores. El problema de este tipo de aproximaciones 
+es que, aunque funcionan bien en escenarios controlados, tienen poca capacidad de adaptación y generalización 
+ante nuevos escenarios o metas distintas.
 
-\Blindtext
+Ante esta situación, el aprendizaje de un modelo deliberativo, es decir, la combinación de modelos de mundo 
+y utilidad, supone una excelente alternativa, permitiendo al agente ser capaz de descubrir objetivos y 
+aspectos relevantes del entorno.
+Trabajos previos, algunos de los cuales comentaremos más adelante (sección \ref{sec:estado_arte}, página \pageref{sec:estado_arte}), 
+han demostrado que el uso de modelos de mundo mejora en gran medida la robustez y la eficacia de los sistemas 
+en entornos complejos y con información parcialmente incompleta. Asimismo, los modelos de utilidad permiten, la independencia y reutilización 
+de los modelos de mundo y el descubrimiento de múltiples metas, cada una evaluada con su propio criterio.
+
+Desde el punto de vista académico, este trabajo permite una aproximación a múltiples tecnologías relacionadas 
+con la informática, como el aprendizaje automático, la robótica, la simulación y el desarrollo de software. 
+Además, la realización de este en un entorno real con el robot y las cámaras Optitrack, así como en uno simulado, 
+permite apreciar las diferencias en ambos tipos de desarrollo y las dificultades para trasladar los conocimientos 
+adquiridos entre ambos entornos. 
+
+
+\section{Objetivos}
+\label{sec:objetivos}
+
+Lo que se pretende lograr con este trabajo es desarrollar un sistema aprendizaje autónomo de un modelo deliberativo 
+de toma de decisiones, basado en modelos de mundo y de utilidad, para un robot cuadrupedo, que le permita encontrar 
+y aprender a alcanzar una serie de objetivos descubiertos previamente.
+
+Para hacer realidad esta meta se definieron una serie de objetivos más concretos:
+
+\begin{itemize}
+  \item Aprender autónomamente un modelo de mundo, basado en el dominio en el que opere el robot, que permita predecir 
+  las percepciones futuras en base a las percepciones actuales y a la acción que se decida tomar.
+  \item Aprender autónomamente un modelo de utilidad que evalúe la utilidad de las percepciones del robot con respecto 
+  al objetivo que se desea alcanzar. Será necesario crear un modelo de utilidad independiente para cada uno.
+  \item Implementar este aprendizaje autónomo en un entorno simulado, en este caso MuJoCo\cite{MujocoWeb}, para facilitar 
+  el análisis de estos modelos.
+  \item Transferir estos modelos de la simulación a un entorno real con un robot cuadrupedo Go2 de 
+  la marca Unitree\cite{UnitreeWeb}, utilizando un sistema de captura de movimiento Optitrack\cite{OptitrackWeb} para 
+  obtener la posición en el entorno.
+  \item Validar, comparar y analizar los resultados obtenidos tanto en el entorno simulado como en el entorno real.
+  \item Validar y analizar la independencia entre modelos de mundo y de utilidad.
+\end{itemize}
+
+
+

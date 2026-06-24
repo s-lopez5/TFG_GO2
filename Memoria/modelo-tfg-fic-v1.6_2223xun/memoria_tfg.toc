@@ -1,19 +1,50 @@
 \xpginauxfiletrue 
-\selectlanguage *{galician}
+\selectlanguage *{spanish}
 \selectlanguage *{english}
-\selectlanguage *{galician}
-\selectlanguage *{galician}
+\selectlanguage *[variant=spanish,spanishoperators=none]{spanish}
+\selectlanguage *{spanish}
 \contentsline {chapter}{\numberline {1}Introdución}{1}{chapter.1}%
-\contentsline {section}{\numberline {1.1}Sección de mostra}{2}{section.1.1}%
-\contentsline {subsection}{\numberline {1.1.1}Subsección de mostra}{3}{subsection.1.1.1}%
-\contentsline {chapter}{\numberline {2}Contido demostrativo}{6}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Inclusión de imaxes}{6}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Inclusión de varias sub-imaxes}{6}{subsection.2.1.1}%
-\contentsline {section}{\numberline {2.2}Inclusión de táboas}{7}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Inclusión de código fonte}{9}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Uso da relación de acrónimos e do glosario}{10}{section.2.4}%
-\contentsline {chapter}{\numberline {3}Conclusións}{12}{chapter.3}%
-\contentsline {chapter}{\numberline {A}Material adicional}{15}{appendix.A}%
-\contentsline {chapter}{Relación de Acrónimos}{17}{section*.7}%
-\contentsline {chapter}{Glosario}{18}{section*.9}%
-\contentsline {chapter}{Bibliografía}{19}{appendix*.11}%
+\contentsline {section}{\numberline {1.1}Motivación}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Objetivos}{2}{section.1.2}%
+\contentsline {chapter}{\numberline {2}Fundamentos tecnológicos}{4}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Estado del arte}{4}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Tecnologías empleadas}{6}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Entorno Python}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Entorno Optitrack}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Entorno del robot}{14}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Entorno MuJoCo}{15}{subsection.2.2.4}%
+\contentsline {chapter}{\numberline {3}Metodología y planificación}{16}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Metodología de desarrollo}{16}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Iteraciones de la metodología en el proyecto}{17}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Herramientas de apoyo a la metodología}{18}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Planificación y seguimiento}{19}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Planificación inicial}{19}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Recursos humanos}{26}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Recursos técnicos}{27}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Costes}{28}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}Desviaciones en la planificación}{29}{subsection.3.2.5}%
+\contentsline {chapter}{\numberline {4}Diseño}{32}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Arquitectura del sistema}{32}{section.4.1}%
+\contentsline {chapter}{\numberline {5}Desarrollo}{34}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Desarrollo en simulación}{34}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Configuración de MuJoCo}{34}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Problemas durante la implementación}{40}{subsection.5.1.2}%
+\contentsline {section}{\numberline {5.2}Desarrollo en robot cuadrúpedo}{42}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Configuración del sistema Optitrack}{42}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Configuración del robot Unitree Go2}{46}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Modelo de mundo}{48}{subsection.5.2.3}%
+\contentsline {subsubsection}{Obtención de datos para el modelo de mundo}{48}{subsubsection*.20}%
+\contentsline {subsubsection}{Entrenamiento del modelo de mundo}{50}{subsubsection*.21}%
+\contentsline {subsection}{\numberline {5.2.4}Modelo de utilidad}{51}{subsection.5.2.4}%
+\contentsline {subsubsection}{Obtención de datos para el modelo de utilidad}{51}{subsubsection*.24}%
+\contentsline {subsubsection}{Entrenamiento del modelo de utilidad}{56}{subsubsection*.25}%
+\contentsline {subsection}{\numberline {5.2.5}Demostración del sistema deliberativo}{58}{subsection.5.2.5}%
+\contentsline {subsection}{\numberline {5.2.6}Independencia entre modelos}{61}{subsection.5.2.6}%
+\contentsline {subsubsection}{Mismo modelo de mundo, diferente modelo de utilidad}{61}{subsubsection*.32}%
+\contentsline {subsubsection}{Diferente modelo de mundo, mismo modelo de utilidad}{62}{subsubsection*.37}%
+\contentsline {chapter}{\numberline {6}Conclusiones}{71}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Alcance de los objetivos}{71}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Lecciones aprendidas}{73}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Trabajo futuro}{73}{section.6.3}%
+\contentsline {chapter}{Glosario}{76}{section*.42}%
+\contentsline {chapter}{Bibliografía}{78}{chapter*.44}%
