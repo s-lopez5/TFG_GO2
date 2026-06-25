@@ -25,6 +25,7 @@ Durante cada iteración, el sistema obtiene las observaciones actuales del entor
 
 ## Estructura del repositorio
 
+```text
 TFG_GO2/ 
 ├── Codigo/             #Codigo del proyecto, modelos, datos y graficas
 │ └── RealRobot/        #Scripts utilizados con el robot real 
@@ -32,10 +33,11 @@ TFG_GO2/
 ├── Memoria/ 
 │ └── modelo-tfg-fic-v1.6_2223xun/      # Documentación y memoria del TFG 
 │ 
-├── VideosRobot/        #Videos de demostracion del robot
-├── model_unitree_go2/ # Modelo del robot Go2 para MuJoCo 
+├── VideosRobot/            #Videos de demostracion del robot
+├── model_unitree_go2/      # Modelo del robot Go2 para MuJoCo 
 ├── README.md 
 └── LICENSE
+```
 
 ## Funcionamiento general
 
@@ -52,16 +54,17 @@ De esta forma, el robot no ejecuta acciones de manera aleatoria durante la demos
 
 ## Instalación
 
-Instalación básica
-
 Clonar el repositorio:
 
+```bash
 git clone https://github.com/s-lopez5/TFG_GO2.git
 cd TFG_GO2
-
+```
 Instalar las dependencias principales:
 
+```bash
 pip install numpy matplotlib tensorflow
+```
 
 Además, para poder ejecutar estos scripts es necesario disponer de un robot Unitree Go2 conectado mediante Ethernet al ordenador y de un equipo auxiliar con Motive conectado a la misma red WiFi que gestione el sistema de camaras Optitrack.
 
